@@ -29,7 +29,7 @@ const Index = () => {
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1623864190822-487053e1673b?w=1920"
-            alt="Kurdistan Discovery"
+            alt=""
             className="w-full h-full object-cover opacity-40 scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
