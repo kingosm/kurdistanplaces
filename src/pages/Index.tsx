@@ -51,40 +51,42 @@ const Index = () => {
             {/* Search Bar removed to enforce hierarchical selection via Provinces */}
 
             <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-              <span>{t('hero.collections')}</span>
+              <div className="flex flex-col gap-1 items-center">
+                <span className="text-foreground text-3xl font-black">500+</span>
+                <span>{t('hero.collections')}</span>
+              </div>
+              <div className="w-px h-12 bg-white/10" />
+              <div className="flex flex-col gap-1 items-center">
+                <span className="text-foreground text-3xl font-black">20k+</span>
+                <span>{t('hero.stats.diners')}</span>
+              </div>
             </div>
-            <div className="w-px h-12 bg-white/10" />
-            <div className="flex flex-col gap-1 items-center">
-              <span className="text-foreground text-3xl font-black">20k+</span>
-              <span>{t('hero.stats.diners')}</span>
+            {/* Version Marker */}
+            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground opacity-50">v1.1</div>
+          </div>
+        </div>
+      </section>
+
+
+
+      {/* Modern CTA */}
+      <section className="py-24 relative overflow-hidden bg-secondary/20">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
+              {t('index.cta.title.premium')}
+            </h2>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium">
+              {t('index.cta.desc.premium')}
+            </p>
+            <div className="pt-8 flex flex-wrap justify-center gap-6">
+              <Button size="lg" asChild className="pill-button hero-gradient h-16 px-10 text-lg text-white transition-all">
+                <Link to="/categories">Start Exploring Now</Link>
+              </Button>
             </div>
           </div>
-          {/* Version Marker */}
-          <div className="absolute bottom-2 right-2 text-xs text-muted-foreground opacity-50">v1.1</div>
         </div>
-      </div>
-    </section>
-
-
-
-      {/* Modern CTA */ }
-  <section className="py-24 relative overflow-hidden bg-secondary/20">
-    <div className="container mx-auto px-6 text-center">
-      <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-        <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
-          {t('index.cta.title.premium')}
-        </h2>
-        <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium">
-          {t('index.cta.desc.premium')}
-        </p>
-        <div className="pt-8 flex flex-wrap justify-center gap-6">
-          <Button size="lg" asChild className="pill-button hero-gradient h-16 px-10 text-lg text-white transition-all">
-            <Link to="/categories">Start Exploring Now</Link>
-          </Button>
-        </div>
-      </div>
-    </div>
-  </section>
+      </section>
     </Layout >
   );
 };
