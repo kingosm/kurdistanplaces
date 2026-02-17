@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react";
+import { Facebook, Instagram, Twitter, Mail, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
@@ -91,8 +91,6 @@ export const Footer = () => {
             </div>
           </div>
 
-          {/* Location/Newsletter placeholder or similar */}
-          {/* Removed Location Column */}
         </div>
 
         <div className="mt-20 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
