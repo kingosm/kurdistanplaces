@@ -12,7 +12,7 @@ export const Footer = () => {
       <div className="absolute inset-y-0 right-0 w-1/3 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8">
           {/* Brand Column */}
           <div className="space-y-6">
             <Link to="/" className="inline-block group">
@@ -92,15 +92,7 @@ export const Footer = () => {
           </div>
 
           {/* Location/Newsletter placeholder or similar */}
-          <div className="bg-secondary/30 p-8 rounded-3xl border border-white/5 backdrop-blur-sm">
-            <MapPin className="w-8 h-8 text-primary mb-4" />
-            <h5 className="font-bold text-xl mb-2">Erbil, Kurdistan</h5>
-            <p className="text-muted-foreground text-sm font-medium mb-6">
-              Dream City, Empire World
-              <br />
-              44001 Erbil, Iraq
-            </p>
-          </div>
+          {/* Removed Location Column */}
         </div>
 
         <div className="mt-20 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center gap-4">
