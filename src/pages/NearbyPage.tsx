@@ -40,13 +40,15 @@ const NearbyPage = () => {
 
   const fetchCategories = useCallback(async () => {
     try {
-      // Fetch categories that are vertical (or standard) and have no parent (global)
+      // Define the desired order and slugs
+      const desiredSlugs = ['restaurants', 'markets', 'mechanics', 'mobile-shops', 'candy-shop'];
+
       const { data, error } = await (supabase as any)
         .from("categories")
         .select("*")
         .eq("category_type", "vertical")
         .is("parent_id", null)
-        .limit(10); // Limit to top 10 for horizontal scroll
+        .in("slug", desiredSlugs);
 
       if (error) {
         console.error("Error fetching categories:", error);
@@ -54,7 +56,9 @@ const NearbyPage = () => {
       }
 
       if (data) {
-        setCategories(data);
+        // Sort data to match desiredSlugs order
+        const sortedData = desiredSlugs.map(slug => data.find((c: Category) => c.slug === slug)).filter(Boolean);
+        setCategories(sortedData);
       }
     } catch (e) {
       console.error("Failed to fetch categories", e);
@@ -195,7 +199,7 @@ const NearbyPage = () => {
                 variant="ghost"
                 onClick={() => setSelectedCategory(null)}
                 className={cn(
-                  "rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
+                  "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
                   selectedCategory === null
                     ? "bg-primary text-white border-primary"
                     : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
@@ -209,7 +213,7 @@ const NearbyPage = () => {
                   variant="ghost"
                   onClick={() => setSelectedCategory(category.id === selectedCategory ? null : category.id)}
                   className={cn(
-                    "rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
+                    "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
                     selectedCategory === category.id
                       ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
                       : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
