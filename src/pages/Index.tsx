@@ -45,12 +45,19 @@ const Index = () => {
     // Fetching on mount ensures accurate numbers every visit.
   }, []);
 
-  // Format count to round up to nearest 50 and use 'k' for thousands
+  // Format count:
+  // - < 50: Round up to nearest 5 (e.g. 3->5, 19->20)
+  // - >= 50: Round up to nearest 50 (e.g. 49->50, 90->100)
+  // - >= 1000: Use 'k' formatting (e.g. 1.2k)
   const formatCount = (count: number) => {
     if (count === 0) return "0";
 
-    // Round up to nearest 50
-    // e.g. 49 -> 50, 90 -> 100
+    // Tier 1: Small numbers (< 50) -> Round up to nearest 5
+    if (count < 50) {
+      return (Math.ceil(count / 5) * 5).toString();
+    }
+
+    // Tier 2: Large numbers (>= 50) -> Round up to nearest 50
     const rounded = Math.ceil(count / 50) * 50;
 
     // Format thousands
