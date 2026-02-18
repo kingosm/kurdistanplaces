@@ -105,7 +105,7 @@ const RestaurantPage = () => {
   }, []);
 
   const fetchReviews = useCallback(async (restaurantId: string) => {
-    const { data: reviewsData } = await supabase
+    const { data: reviewsData, error } = await supabase
       .from("reviews")
       .select(`
         *,
@@ -116,7 +116,14 @@ const RestaurantPage = () => {
       .eq("restaurant_id", restaurantId)
       .order("created_at", { ascending: false });
 
+    if (error) {
+      console.error("Error fetching reviews:", error);
+      // Optional: Toast error only if you want user to see it immediately
+      // toast({ title: "Could not load reviews", description: error.message, variant: "destructive" });
+    }
+
     if (reviewsData) {
+      console.log("Reviews fetched from DB:", reviewsData.length);
       const reviewsWithProfiles = await Promise.all(
         reviewsData.map(async (review) => {
           const { data: profile } = await supabase
