@@ -6,6 +6,7 @@ import { MultiImageUpload } from "@/components/ui/multi-image-upload";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { processImage } from "@/lib/moderation";
 
 interface ReviewFormProps {
   restaurantId: string;
@@ -25,13 +26,26 @@ export function ReviewForm({ restaurantId, onReviewSubmitted }: ReviewFormProps)
     setIsUploading(true);
     try {
       const uploadPromises = files.map(async (file) => {
-        const fileExt = file.name.split('.').pop();
+        // Run moderation (GIF conversion + NSFW check)
+        const { safe, file: processedFile, reason } = await processImage(file);
+
+        if (!safe) {
+          console.warn(`Blocked unsafe image: ${file.name} - ${reason}`);
+          toast({
+            title: t('review.upload_blocked'),
+            description: reason,
+            variant: "destructive"
+          });
+          return null; // Skip this file
+        }
+
+        const fileExt = processedFile.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from('images') // Using the existing 'images' bucket
-          .upload(filePath, file);
+          .upload(filePath, processedFile);
 
         if (uploadError) throw uploadError;
 
@@ -42,7 +56,7 @@ export function ReviewForm({ restaurantId, onReviewSubmitted }: ReviewFormProps)
         return publicUrl;
       });
 
-      const uploadedUrls = await Promise.all(uploadPromises);
+      const uploadedUrls = (await Promise.all(uploadPromises)).filter((url): url is string => url !== null);
       setPhotos((prev) => [...prev, ...uploadedUrls]);
     } catch (error) {
       console.error("Upload error:", error);

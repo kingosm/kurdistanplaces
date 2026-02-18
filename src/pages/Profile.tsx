@@ -15,6 +15,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { processImage } from "@/lib/moderation";
 
 const Profile = () => {
     const { t } = useLanguage();
@@ -133,13 +134,25 @@ const Profile = () => {
                 setUploadProgress(prev => Math.min(prev + 10, 90));
             }, 100);
 
-            const fileExt = file.name.split('.').pop();
+            const { safe, file: processedFile, reason } = await processImage(file);
+
+            if (!safe) {
+                clearInterval(progressInterval);
+                toast({
+                    title: "Upload Rejected",
+                    description: reason || "Unsafe content detected",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            const fileExt = processedFile.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `avatars/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('images')
-                .upload(filePath, file);
+                .upload(filePath, processedFile);
 
             clearInterval(progressInterval);
             setUploadProgress(100);
