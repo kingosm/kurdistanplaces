@@ -15,7 +15,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import {
     Tabs,
@@ -30,7 +29,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Loader2, Plus, Utensils, Eye, EyeOff, RefreshCw, Users as UsersIcon, X, Check, ChevronDown, ChevronRight, MapPin } from "lucide-react";
+import { Pencil, Trash2, Loader2, Plus, Utensils, Eye, EyeOff, Users as UsersIcon, ChevronRight, MapPin } from "lucide-react";
 
 
 import { CreateCategoryDialog } from "@/components/admin/CreateCategoryDialog";
@@ -66,16 +65,6 @@ interface Category {
     parent_id?: string | null;
 }
 
-interface MenuItem {
-    id: string;
-    restaurant_id: string;
-    name: string;
-    description: string | null;
-    price: number | null;
-    image_url: string | null;
-    category: string | null;
-    is_visible: boolean;
-}
 
 interface Review {
     id: string;
@@ -92,15 +81,6 @@ interface Review {
     } | null;
 }
 
-interface User {
-    id: string;
-    email: string;
-    created_at: string;
-    profile?: {
-        full_name: string | null;
-        username_changed_at: string | null;
-    } | null;
-}
 
 const AdminDashboard = () => {
     // SAFE INITIALIZATION
@@ -112,8 +92,6 @@ const AdminDashboard = () => {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [reviews, setReviews] = useState<Review[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
     // UI STATE
     const [isLoading, setIsLoading] = useState(true);
@@ -203,26 +181,7 @@ const AdminDashboard = () => {
         }
     }, []);
 
-    const fetchUsers = useCallback(async () => {
-        // RPC function 'get_users_for_admin' does not exist yet. 
-        // Commenting out to prevent errors.
-        console.log("Skipping user fetch - RPC missing");
-        setUsers([]);
-    }, []);
 
-    const fetchMenuItems = useCallback(async (restaurantId: string) => {
-        const { data, error } = await (supabase as any)
-            .from("menu_items")
-            .select("*")
-            .eq("restaurant_id", restaurantId)
-            .order("created_at", { ascending: false });
-
-        if (error) {
-            console.error("Error fetching menu items:", error);
-        } else if (data) {
-            setMenuItems(data as unknown as MenuItem[]);
-        }
-    }, []);
 
 
     // ==========================================
@@ -281,7 +240,6 @@ const AdminDashboard = () => {
             await fetchRestaurants();
             await fetchCategories();
             await fetchReviews();
-            await fetchUsers();
 
             setIsLoading(false); // Success!
 
@@ -302,7 +260,7 @@ const AdminDashboard = () => {
                 variant: "destructive",
             });
         }
-    }, [navigate, toast, fetchRestaurants, fetchCategories, fetchReviews, fetchUsers]);
+    }, [navigate, toast, fetchRestaurants, fetchCategories, fetchReviews]);
 
 
     // ==========================================
@@ -315,14 +273,6 @@ const AdminDashboard = () => {
     }, [checkAdmin]);
 
 
-    // ==========================================
-    // EVENT HANDLERS (Simplified for Rewrite)
-    // ==========================================
-    // ... I'll include the handlers, but simplify them to valid code ...
-    // Note: I'm pasting the handlers from the viewed file, assuming they were roughly correct,
-    // but just in case, I will include standard implementations.
-    // Actually, to avoid losing logic, I'm just going to include the Toggle, Create, Update, Delete skeletons
-    // which use the same pattern as before, but clean.
 
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();

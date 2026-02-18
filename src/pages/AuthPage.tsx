@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Layout } from "@/components/layout/Layout";
@@ -22,8 +22,8 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const emailSchema = useMemo(() => z.string().email(t('auth.val.email')), [t]);
-  const passwordSchema = useMemo(() => z.string().min(6, t('auth.val.password')), [t]);
+  const emailSchema = z.string().email(t('auth.val.email'));
+  const passwordSchema = z.string().min(6, t('auth.val.password'));
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -94,17 +94,9 @@ const AuthPage = () => {
         variant: "destructive",
       });
     } finally {
-      if (mounted.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
-
-  // Add mounted ref to prevent state updates on unmount
-  const mounted = useMemo(() => ({ current: true }), []);
-  useEffect(() => {
-    return () => { mounted.current = false; };
-  }, [mounted]);
 
 
   const handleSignUp = async (e: React.FormEvent) => {

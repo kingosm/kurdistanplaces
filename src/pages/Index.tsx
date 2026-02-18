@@ -2,19 +2,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import { useLocation } from "@/hooks/use-location";
-import { Utensils, ShoppingBag, Wrench, Smartphone } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
-// Redundant calculateDistance removed (now in useLocation hook)
-
-// Redundant calculateDistance removed (now in useLocation hook)
 
 const Index = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const { userLocation, isLoadingLocation, locationError, requestLocation, calculateDistance } = useLocation();
 
   const [stats, setStats] = useState({ places: 0, community: 0 });
 
@@ -68,13 +61,7 @@ const Index = () => {
     return rounded.toString();
   };
 
-  const heroImages = [
-    "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800", // Kurdish Stew
-    "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?w=800", // Dolma
-    "https://images.unsplash.com/photo-1544025162-d76694265947?w=800", // Grilled Meat
-  ];
 
-  // Restaurant fetching and search results logic removed to enforce hierarchy
 
   return (
     <Layout>
