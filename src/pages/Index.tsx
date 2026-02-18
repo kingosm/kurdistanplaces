@@ -93,7 +93,7 @@ const Index = () => {
           <div className="max-w-5xl mx-auto space-y-12 animate-reveal text-center">
             <div className="space-y-6">
               <span className="place-badge mx-auto">{t('hero.badge')}</span>
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.8] mb-8">
+              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.8] rtl:leading-[1.5] mb-8">
                 {t('hero.title.part1')} <br />
                 <span className="text-primary">{t('hero.title.part2')}</span>
               </h1>
@@ -125,7 +125,7 @@ const Index = () => {
       <section className="py-24 relative overflow-hidden bg-secondary/20">
         <div className="container mx-auto px-6 text-center">
           <div className="max-w-4xl mx-auto space-y-8 relative z-10">
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
+            <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none rtl:leading-[1.4]">
               {t('index.cta.title.premium')}
             </h2>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium">

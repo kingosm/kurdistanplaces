@@ -65,7 +65,7 @@
   [dir="rtl"] {
     text-align: right;
     font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
-    /* Better font for Kurdish/Arabic */
+    line-height: 1.8;
   }
 
   [dir="rtl"] h1,
@@ -74,7 +74,7 @@
   [dir="rtl"] h4,
   [dir="rtl"] h5,
   [dir="rtl"] h6 {
-    line-height: 1.5;
+    line-height: 1.8;
     /* Increased line height for taller glyphs */
     font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
   }
@@ -83,7 +83,7 @@
   [dir="rtl"] span,
   [dir="rtl"] a,
   [dir="rtl"] button {
-    line-height: 1.6;
+    line-height: 1.8;
   }
 
   [dir="rtl"] .text-left {
