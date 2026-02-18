@@ -54,39 +54,45 @@ export function Header() {
     )}>
       {/* Force LTR container to keep logo left and buttons right regardless of language */}
       <div className="container mx-auto px-4 md:px-8" dir="ltr">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="flex items-center gap-2 md:gap-4 group shrink-0"
-          >
-            <div className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105 shrink-0">
+        <div className="flex items-center justify-between gap-4">
+          {/* Logo Icon - Far Left */}
+          <div className="flex items-center">
+            <Link
+              to="/"
+              className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 hover:scale-105 shrink-0"
+            >
               <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
-              KURDISTAN<span className="text-primary">PLACES</span>
-            </h1>
-          </Link>
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-            {[
-              { to: '/', label: t('nav.home') },
-              { to: '/categories', label: t('nav.categories') },
-              { to: '/nearby', label: t('nav.nearby') },
-            ].map((link, i) => (
-              <Link
-                key={i}
-                to={link.to}
-                className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Centered Word & Desktop Nav */}
+          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12">
+            <Link to="/" className="group shrink-0">
+              <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center translate-y-1.5">
+                KURDISTAN<span className="text-primary">PLACES</span>
+              </h1>
+            </Link>
 
-          {/* User Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+            {/* Desktop Navigation - Shifted to be near the word */}
+            <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
+              {[
+                { to: '/', label: t('nav.home') },
+                { to: '/categories', label: t('nav.categories') },
+                { to: '/nearby', label: t('nav.nearby') },
+              ].map((link, i) => (
+                <Link
+                  key={i}
+                  to={link.to}
+                  className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap translate-y-1"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* User Actions - Far Right */}
+          <div className="flex items-center gap-2 md:gap-4 shrink-0">
             <LanguageSwitcher />
 
             {/* Show loader while initializing session */}
