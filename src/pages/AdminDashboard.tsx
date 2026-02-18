@@ -30,7 +30,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Loader2, Plus, Utensils, Eye, EyeOff, RefreshCw, Users as UsersIcon, X, Check, ChevronDown, ChevronRight } from "lucide-react";
+import { Pencil, Trash2, Loader2, Plus, Utensils, Eye, EyeOff, RefreshCw, Users as UsersIcon, X, Check, ChevronDown, ChevronRight, MapPin } from "lucide-react";
 
 
 import { CreateCategoryDialog } from "@/components/admin/CreateCategoryDialog";
@@ -735,23 +735,59 @@ const AdminDashboard = () => {
                                                     onChange={(e) => setEditingRestaurant(prev => prev ? { ...prev, phone: e.target.value } : null)}
                                                 />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label>Latitude</Label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={editingRestaurant?.latitude ?? ""}
-                                                    onChange={(e) => setEditingRestaurant(prev => prev ? { ...prev, latitude: e.target.value ? parseFloat(e.target.value) : null } : null)}
-                                                />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Label>Longitude</Label>
-                                                <Input
-                                                    type="number"
-                                                    step="any"
-                                                    value={editingRestaurant?.longitude ?? ""}
-                                                    onChange={(e) => setEditingRestaurant(prev => prev ? { ...prev, longitude: e.target.value ? parseFloat(e.target.value) : null } : null)}
-                                                />
+                                            <div className="space-y-2 md:col-span-2">
+                                                <Label>Location</Label>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs text-muted-foreground">Latitude</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={editingRestaurant?.latitude ?? ""}
+                                                            onChange={(e) => setEditingRestaurant(prev => prev ? { ...prev, latitude: e.target.value ? parseFloat(e.target.value) : null } : null)}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs text-muted-foreground">Longitude</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={editingRestaurant?.longitude ?? ""}
+                                                            onChange={(e) => setEditingRestaurant(prev => prev ? { ...prev, longitude: e.target.value ? parseFloat(e.target.value) : null } : null)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full mt-2 gap-2 text-primary border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                                    onClick={() => {
+                                                        if (!navigator.geolocation) {
+                                                            toast({ title: "Error", description: "Geolocation is not supported by your browser.", variant: "destructive" });
+                                                            return;
+                                                        }
+                                                        setIsLoading(true); // Using global loading state for simplicity or add local state
+                                                        navigator.geolocation.getCurrentPosition(
+                                                            (position) => {
+                                                                setEditingRestaurant(prev => prev ? {
+                                                                    ...prev,
+                                                                    latitude: position.coords.latitude,
+                                                                    longitude: position.coords.longitude
+                                                                } : null);
+                                                                setIsLoading(false);
+                                                                toast({ title: "Success", description: "Location updated!" });
+                                                            },
+                                                            (error) => {
+                                                                console.error("Geolocation error:", error);
+                                                                toast({ title: "Error", description: "Unable to retrieve your location. Please check permissions.", variant: "destructive" });
+                                                                setIsLoading(false);
+                                                            }
+                                                        );
+                                                    }}
+                                                >
+                                                    <MapPin className="w-4 h-4" />
+                                                    Use My Current Location
+                                                </Button>
                                             </div>
                                             <div className="space-y-2">
                                                 <Label>Category</Label>
@@ -855,6 +891,212 @@ const AdminDashboard = () => {
                                         <div className="flex justify-end gap-2">
                                             <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
                                             <Button type="submit">Update Restaurant</Button>
+                                        </div>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
+
+                            {/* CREATE RESTAURANT DIALOG */}
+                            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                                    <DialogHeader>
+                                        <DialogTitle>Add New Restaurant</DialogTitle>
+                                    </DialogHeader>
+                                    <form onSubmit={handleCreate} className="space-y-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>Name *</Label>
+                                                <Input
+                                                    value={newRestaurant.name || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, name: e.target.value }))}
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Slug</Label>
+                                                <Input
+                                                    value={newRestaurant.name?.toLowerCase().replace(/ /g, "-") || ""}
+                                                    disabled
+                                                    placeholder="Auto-generated"
+                                                />
+                                            </div>
+                                            <div className="space-y-2 md:col-span-2">
+                                                <Label>Description</Label>
+                                                <Textarea
+                                                    value={newRestaurant.description || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, description: e.target.value }))}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Address</Label>
+                                                <Input
+                                                    value={newRestaurant.address || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, address: e.target.value }))}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Phone</Label>
+                                                <Input
+                                                    value={newRestaurant.phone || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, phone: e.target.value }))}
+                                                />
+                                            </div>
+                                            <div className="space-y-2 md:col-span-2">
+                                                <Label>Location</Label>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs text-muted-foreground">Latitude</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={newRestaurant.latitude ?? ""}
+                                                            onChange={(e) => setNewRestaurant(prev => ({ ...prev, latitude: e.target.value ? parseFloat(e.target.value) : null }))}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs text-muted-foreground">Longitude</Label>
+                                                        <Input
+                                                            type="number"
+                                                            step="any"
+                                                            value={newRestaurant.longitude ?? ""}
+                                                            onChange={(e) => setNewRestaurant(prev => ({ ...prev, longitude: e.target.value ? parseFloat(e.target.value) : null }))}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <Button
+                                                    type="button"
+                                                    variant="outline"
+                                                    className="w-full mt-2 gap-2 text-primary border-primary/20 hover:bg-primary/5 hover:text-primary"
+                                                    onClick={() => {
+                                                        if (!navigator.geolocation) {
+                                                            toast({ title: "Error", description: "Geolocation is not supported by your browser.", variant: "destructive" });
+                                                            return;
+                                                        }
+                                                        setIsLoading(true);
+                                                        navigator.geolocation.getCurrentPosition(
+                                                            (position) => {
+                                                                setNewRestaurant(prev => ({
+                                                                    ...prev,
+                                                                    latitude: position.coords.latitude,
+                                                                    longitude: position.coords.longitude
+                                                                }));
+                                                                setIsLoading(false);
+                                                                toast({ title: "Success", description: "Location captured!" });
+                                                            },
+                                                            (error) => {
+                                                                console.error("Geolocation error:", error);
+                                                                toast({ title: "Error", description: "Unable to retrieve your location.", variant: "destructive" });
+                                                                setIsLoading(false);
+                                                            }
+                                                        );
+                                                    }}
+                                                >
+                                                    <MapPin className="w-4 h-4" />
+                                                    Use My Current Location
+                                                </Button>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Category</Label>
+                                                <select
+                                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                                    value={newRestaurant.category_id || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, category_id: e.target.value }))}
+                                                >
+                                                    <option value="">Select a category</option>
+                                                    {categories
+                                                        .filter(c => c.category_type === 'province')
+                                                        .map((province) => {
+                                                            const childCategories = categories.filter(c => c.parent_id === province.id);
+                                                            if (childCategories.length === 0) return null;
+                                                            return (
+                                                                <optgroup key={province.id} label={province.name}>
+                                                                    {childCategories.map((child) => (
+                                                                        <option key={child.id} value={child.id}>
+                                                                            {child.name}
+                                                                        </option>
+                                                                    ))}
+                                                                </optgroup>
+                                                            );
+                                                        })
+                                                    }
+                                                    <optgroup label="Other">
+                                                        {categories
+                                                            .filter(c => c.category_type === 'standard' && !c.parent_id)
+                                                            .map((category) => (
+                                                                <option key={category.id} value={category.id}>
+                                                                    {category.name}
+                                                                </option>
+                                                            ))
+                                                        }
+                                                    </optgroup>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2 md:col-span-2">
+                                                <div className="space-y-2">
+                                                    <ImageUpload
+                                                        value={newRestaurant.image_url || null}
+                                                        onUpload={async (file) => {
+                                                            setIsUploading(true);
+                                                            try {
+                                                                const fileExt = file.name.split('.').pop();
+                                                                const fileName = `restaurants/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                                                                const { error } = await supabase.storage.from('images').upload(fileName, file);
+                                                                if (error) throw error;
+                                                                const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(fileName);
+                                                                setNewRestaurant(prev => ({ ...prev, image_url: publicUrl }));
+                                                            } catch (error: any) {
+                                                                toast({ title: "Upload Error", description: error.message, variant: "destructive" });
+                                                            } finally {
+                                                                setIsUploading(false);
+                                                            }
+                                                        }}
+                                                        onRemove={() => setNewRestaurant(prev => ({ ...prev, image_url: null }))}
+                                                        isUploading={isUploading}
+                                                    />
+                                                    <Input
+                                                        placeholder="Or enter image URL manually"
+                                                        value={newRestaurant.image_url || ""}
+                                                        onChange={(e) => setNewRestaurant(prev => ({ ...prev, image_url: e.target.value }))}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Opening Hours</Label>
+                                                <Input
+                                                    value={newRestaurant.opening_hours || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, opening_hours: e.target.value }))}
+                                                    placeholder="e.g. 9:00 AM - 11:00 PM"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>TikTok URL</Label>
+                                                <Input
+                                                    value={newRestaurant.tiktok_url || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, tiktok_url: e.target.value }))}
+                                                    placeholder="https://tiktok.com/@..."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Facebook URL</Label>
+                                                <Input
+                                                    value={newRestaurant.facebook_url || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, facebook_url: e.target.value }))}
+                                                    placeholder="https://facebook.com/..."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Instagram URL</Label>
+                                                <Input
+                                                    value={newRestaurant.instagram_url || ""}
+                                                    onChange={(e) => setNewRestaurant(prev => ({ ...prev, instagram_url: e.target.value }))}
+                                                    placeholder="https://instagram.com/..."
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-end gap-2">
+                                            <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
+                                            <Button type="submit">Create Restaurant</Button>
                                         </div>
                                     </form>
                                 </DialogContent>
