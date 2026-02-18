@@ -89,6 +89,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
 
+        <style>{`img { display: none !important; }`}</style>
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
             <div className="mb-12">
