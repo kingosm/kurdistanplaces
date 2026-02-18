@@ -1,16 +1,21 @@
-import * as nsfwjs from 'nsfwjs';
-import '@tensorflow/tfjs';
-
 // Singleton model instance
-let model: nsfwjs.NSFWJS | null = null;
+let nsfwModel: any | null = null;
 
 const loadModel = async () => {
-    if (model) return model;
+    if (nsfwModel) return nsfwModel;
     try {
-        // Load the model from default CDN
-        // Note: This requires internet access on first load
-        model = await nsfwjs.load();
-        return model;
+        console.log("Loading AI moderation libraries on-demand...");
+        // Dynamic imports to prevent loading heavy AI libraries on initial page load
+        const [nsfwjs, tf] = await Promise.all([
+            import('nsfwjs'),
+            import('@tensorflow/tfjs')
+        ]);
+
+        // Wait for TF to be ready (though nsfwjs usually handles this)
+        await tf.ready();
+
+        nsfwModel = await nsfwjs.load();
+        return nsfwModel;
     } catch (err) {
         console.error("Failed to load NSFW model:", err);
         return null;

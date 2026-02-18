@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,19 +6,21 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { UserProvider } from "./contexts/UserContext";
-import Index from "./pages/Index";
-import AuthPage from "./pages/AuthPage";
-import CategoryPage from "./pages/CategoryPage";
-import CategoriesPage from "./pages/CategoriesPage";
-import RestaurantPage from "./pages/RestaurantPage";
-import NearbyPage from "./pages/NearbyPage";
-import FavoritesPage from "./pages/FavoritesPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import ResetPassword from "./pages/ResetPassword";
-import ForgotPassword from "./pages/ForgotPassword";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
+
+// Lazy load pages for performance
+const Index = lazy(() => import("./pages/Index"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const CategoriesPage = lazy(() => import("./pages/CategoriesPage"));
+const RestaurantPage = lazy(() => import("./pages/RestaurantPage"));
+const NearbyPage = lazy(() => import("./pages/NearbyPage"));
+const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const Profile = lazy(() => import("./pages/Profile"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,20 +41,22 @@ const App = () => (
           <Sonner />
           <BrowserRouter basename={import.meta.env.BASE_URL}>
             <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/category/:slug" element={<CategoryPage />} />
-              <Route path="/restaurant/:slug" element={<RestaurantPage />} />
-              <Route path="/nearby" element={<NearbyPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<div className="min-h-screen bg-background" />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/category/:slug" element={<CategoryPage />} />
+                <Route path="/restaurant/:slug" element={<RestaurantPage />} />
+                <Route path="/nearby" element={<NearbyPage />} />
+                <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </UserProvider>
       </LanguageProvider>
