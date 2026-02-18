@@ -99,7 +99,7 @@ export function MenuSection({ items }: MenuSectionProps) {
                 {/* Content */}
                 <div className="flex-1 space-y-2">
                   <div className="flex items-baseline justify-between gap-4">
-                    <h5 className="font-serif text-xl font-medium tracking-wide text-foreground group-hover:text-primary transition-colors">
+                    <h5 className="font-display text-xl font-medium tracking-wide text-foreground group-hover:text-primary transition-colors">
                       {item.name}
                     </h5>
 
