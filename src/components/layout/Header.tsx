@@ -17,7 +17,7 @@ import { useUser } from "@/contexts/UserContext"; // Import useUser
 import { cn } from "@/lib/utils";
 
 export function Header() {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
 
   const { user, profile, isAdmin, loading } = useUser(); // Use UserContext
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,7 +52,8 @@ export function Header() {
         ? "py-3 bg-background/60 backdrop-blur-3xl border-b border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]"
         : "py-8 bg-transparent"
     )}>
-      <div className="container mx-auto px-4 md:px-8">
+      {/* Force LTR container to keep logo left and buttons right regardless of language */}
+      <div className="container mx-auto px-4 md:px-8" dir="ltr">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
@@ -62,31 +63,32 @@ export function Header() {
             <div className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105 shrink-0">
               <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
+            <h1 className={cn(
+              "text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center",
+              isRTL && "font-kurdish text-3xl md:text-4xl"
+            )}>
               KURDISTAN<span className="text-primary">PLACES</span>
             </h1>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-            <Link
-              to="/"
-              className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
-            >
-              {t('nav.home')}
-            </Link>
-            <Link
-              to="/categories"
-              className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
-            >
-              {t('nav.categories')}
-            </Link>
-            <Link
-              to="/nearby"
-              className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
-            >
-              {t('nav.nearby')}
-            </Link>
+            {[
+              { to: '/', label: t('nav.home') },
+              { to: '/categories', label: t('nav.categories') },
+              { to: '/nearby', label: t('nav.nearby') },
+            ].map((link, i) => (
+              <Link
+                key={i}
+                to={link.to}
+                className={cn(
+                  "font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap",
+                  isRTL ? "font-kurdish text-sm md:text-base tracking-normal" : "text-[10px] md:text-xs"
+                )}
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           {/* User Actions */}
@@ -99,7 +101,7 @@ export function Header() {
                 <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               </div>
             ) : user ? (
-              <DropdownMenu>
+              <DropdownMenu dir={isRTL ? "rtl" : "ltr"}>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-xl md:rounded-2xl hover:bg-primary/10 transition-colors relative overflow-hidden w-8 h-8 md:w-10 md:h-10">
                     {profile?.avatar_url ? (
@@ -117,13 +119,13 @@ export function Header() {
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link to="/profile" className="flex items-center gap-3 p-2">
                       <User className="w-4 h-4 text-primary" />
-                      <span className="font-medium">{t('nav.profile')}</span>
+                      <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.profile')}</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link to="/favorites" className="flex items-center gap-3 p-2">
                       <Heart className="w-4 h-4 text-rose-500" />
-                      <span className="font-medium">{t('nav.favorites')}</span>
+                      <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.favorites')}</span>
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -132,7 +134,7 @@ export function Header() {
                       <DropdownMenuItem asChild className="cursor-pointer">
                         <Link to="/admin" className="flex items-center gap-3 p-2">
                           <Settings className="w-4 h-4 text-amber-500" />
-                          <span className="font-medium">{t('nav.admin')}</span>
+                          <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.admin')}</span>
                         </Link>
                       </DropdownMenuItem>
                     </>
@@ -140,12 +142,12 @@ export function Header() {
                   <DropdownMenuSeparator className="opacity-10" />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer p-2">
                     <LogOut className="w-4 h-4 mr-3" />
-                    <span className="font-medium">{t('nav.signout')}</span>
+                    <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.signout')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden lg:flex pill-button hero-gradient px-8 text-background">
+              <Button asChild className={cn("hidden lg:flex pill-button hero-gradient px-8 text-background", isRTL && "font-kurdish text-lg h-12")}>
                 <Link to="/auth">{t('nav.signin')}</Link>
               </Button>
             )}
@@ -163,32 +165,28 @@ export function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden py-10 px-6 gourmet-border bg-secondary/95 backdrop-blur-3xl mt-4 animate-reveal shadow-3xl overflow-hidden">
+          <div className="lg:hidden py-10 px-6 gourmet-border bg-secondary/95 backdrop-blur-3xl mt-4 animate-reveal shadow-3xl overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
             <nav className="flex flex-col gap-6">
-              <Link
-                to="/"
-                className="text-lg font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.home')}
-              </Link>
-              <Link
-                to="/categories"
-                className="text-lg font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.categories')}
-              </Link>
-              <Link
-                to="/nearby"
-                className="text-lg font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.nearby')}
-              </Link>
+              {[
+                { to: '/', label: t('nav.home') },
+                { to: '/categories', label: t('nav.categories') },
+                { to: '/nearby', label: t('nav.nearby') },
+              ].map((link, i) => (
+                <Link
+                  key={i}
+                  to={link.to}
+                  className={cn(
+                    "font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors",
+                    isRTL ? "font-kurdish text-2xl" : "text-lg"
+                  )}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
               {!user && (
                 <div className="px-4 pt-6 border-t border-white/5">
-                  <Button asChild className="w-full pill-button hero-gradient text-background">
+                  <Button asChild className={cn("w-full pill-button hero-gradient text-background", isRTL && "font-kurdish text-xl h-14")}>
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       {t('nav.signin')}
                     </Link>

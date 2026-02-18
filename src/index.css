@@ -61,6 +61,10 @@
     font-display: swap;
   }
 
+  .font-kurdish {
+    font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif !important;
+  }
+
   /* RTL Support */
   [dir="rtl"] {
     text-align: right;
