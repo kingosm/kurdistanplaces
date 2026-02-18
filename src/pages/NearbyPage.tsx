@@ -125,7 +125,7 @@ const NearbyPage = () => {
             : undefined,
       }))
       .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
-      .filter((r) => (r.distance ?? Infinity) <= 50) // Increased range to find more items for testing
+      .filter((r) => (r.distance ?? Infinity) <= 5) // Max 5km distance
       .filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true)
     : restaurants.filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true);
 
