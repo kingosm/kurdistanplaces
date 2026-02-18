@@ -60,11 +60,8 @@ export function Header() {
               <MapPin className="w-5 h-5 md:w-7 md:h-7 text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg md:text-3xl font-black tracking-tighter transition-colors group-hover:text-primary leading-none whitespace-nowrap relative">
-                <span className="bg-gradient-to-b from-[#EF3340] via-white to-[#007A3D] bg-[length:100%_100%] bg-clip-text text-transparent drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] filter contrast-125">KURDISTAN</span>
-                {/* Sun Element (Yellow Glow) */}
-                <span className="absolute inset-0 bg-gradient-to-b from-[#EF3340] via-white to-[#007A3D] bg-clip-text text-transparent blur-sm opacity-20 -z-10" aria-hidden="true">KURDISTAN</span>
-                <span className="text-primary">PLACES</span>
+              <h1 className="text-lg md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-none whitespace-nowrap">
+                KURDISTAN<span className="text-primary">PLACES</span>
               </h1>
             </div>
           </Link>
