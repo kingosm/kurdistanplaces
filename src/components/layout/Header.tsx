@@ -63,7 +63,7 @@ export function Header() {
             <div className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105 shrink-0">
               <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
+            <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
               KURDISTAN<span className="text-primary">PLACES</span>
             </h1>
           </Link>
@@ -78,7 +78,7 @@ export function Header() {
               <Link
                 key={i}
                 to={link.to}
-                className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
+                className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -169,7 +169,7 @@ export function Header() {
                 <Link
                   key={i}
                   to={link.to}
-                  className="text-lg font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
+                  className="text-lg font-sans font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
