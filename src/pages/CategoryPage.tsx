@@ -197,7 +197,7 @@ const CategoryPage = () => {
             Discovery Mode
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black text-foreground mb-4 leading-none tracking-tighter">
+          <h1 className="text-5xl md:text-7xl font-black text-foreground mb-4 leading-[1.2] tracking-tighter pt-2 pb-2">
             {translateCategoryName(category.name)}
           </h1>
           {category.description && (

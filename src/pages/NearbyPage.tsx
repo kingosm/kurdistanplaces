@@ -145,7 +145,7 @@ const NearbyPage = () => {
               <div className="place-badge">
                 {t('nearby.badge.premium')}
               </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-none">
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.2] pt-2 pb-2">
                 {t('nearby.title')}
               </h1>
               <p className="text-lg text-muted-foreground font-medium max-w-xl">

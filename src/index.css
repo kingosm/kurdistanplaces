@@ -69,7 +69,7 @@
   [dir="rtl"] {
     text-align: right;
     font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
-    line-height: 1.8;
+    line-height: 2 !important;
   }
 
   [dir="rtl"] h1,
@@ -78,16 +78,16 @@
   [dir="rtl"] h4,
   [dir="rtl"] h5,
   [dir="rtl"] h6 {
-    line-height: 1.8;
-    /* Increased line height for taller glyphs */
-    font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
+    line-height: 1.6 !important;
+    padding-top: 0.15em;
+    padding-bottom: 0.15em;
   }
 
   [dir="rtl"] p,
   [dir="rtl"] span,
   [dir="rtl"] a,
   [dir="rtl"] button {
-    line-height: 1.8;
+    line-height: 2 !important;
   }
 
   [dir="rtl"] .text-left {

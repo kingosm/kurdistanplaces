@@ -91,7 +91,13 @@ const Index = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
             <div className="mb-12">
-              <span className="place-badge mx-auto block mb-6">{t('hero.badge')}</span><h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8">{t('hero.title')}</h1><p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">{t('hero.desc.premium')}</p>
+              <span className="place-badge mx-auto block mb-6">{t('hero.badge')}</span>
+              <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[1.1] pt-4 pb-4">
+                {t('hero.title')}
+              </h1>
+              <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed pt-2">
+                {t('hero.desc.premium')}
+              </p>
             </div>
 
             <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
@@ -122,7 +128,7 @@ const Index = () => {
               {t('index.cta.desc.premium')}
             </p>
             <div className="pt-8 flex flex-wrap justify-center gap-6">
-              <Button size="lg" asChild className="pill-button hero-gradient h-16 px-10 text-lg text-white transition-all">
+              <Button size="lg" asChild className="pill-button hero-gradient min-h-[4rem] h-auto py-4 px-10 text-lg text-white transition-all">
                 <Link to="/categories">Start Exploring Now</Link>
               </Button>
             </div>

@@ -66,9 +66,9 @@ export function Header() {
           </div>
 
           {/* Centered Word & Desktop Nav */}
-          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12">
+          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
             <Link to="/" className="group shrink-0">
-              <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center translate-y-1.5">
+              <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
                 KURDISTAN<span className="text-primary">PLACES</span>
               </h1>
             </Link>
@@ -83,7 +83,7 @@ export function Header() {
                 <Link
                   key={i}
                   to={link.to}
-                  className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap translate-y-1"
+                  className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
                 >
                   {link.label}
                 </Link>
@@ -147,7 +147,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden lg:flex pill-button hero-gradient px-8 text-background">
+              <Button asChild className="hidden lg:flex pill-button hero-gradient px-8 min-h-[2.75rem] h-auto py-2.5 text-background leading-normal">
                 <Link to="/auth">{t('nav.signin')}</Link>
               </Button>
             )}

@@ -189,7 +189,7 @@ const AuthPage = () => {
     <Button
       type="button"
       variant="outline"
-      className="w-full pill-button h-16 text-lg border-white/10 hover:bg-white/5 bg-secondary/30 gap-3"
+      className="w-full pill-button min-h-[4rem] h-auto py-4 text-lg border-white/10 hover:bg-white/5 bg-secondary/30 gap-3 leading-normal"
       onClick={handleGoogleLogin}
       disabled={isLoading}
     >
@@ -232,7 +232,7 @@ const AuthPage = () => {
             </Link>
             <div className="flex flex-col items-center gap-3 mb-6">
               <span className="text-primary text-sm font-black uppercase tracking-[0.4em]">{t('auth.get_started')}</span>
-              <h1 className="text-5xl font-black tracking-tighter leading-none">
+              <h1 className="text-5xl font-black tracking-tighter leading-normal pt-2 pb-2">
                 KURDISTAN<span className="text-primary">PLACES</span>
               </h1>
               <div className="w-12 h-1.5 bg-primary/20 rounded-full mt-4" />
@@ -314,7 +314,7 @@ const AuthPage = () => {
 
                   <Button
                     type="submit"
-                    className="w-full pill-button hero-gradient h-16 text-lg text-white"
+                    className="w-full pill-button hero-gradient min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
                     disabled={isLoading}
                   >
                     {isLoading ? t('auth.btn.signing_in') : t('auth.btn.signin')}
@@ -394,7 +394,7 @@ const AuthPage = () => {
 
                   <Button
                     type="submit"
-                    className="w-full pill-button hero-gradient h-16 text-lg text-white"
+                    className="w-full pill-button hero-gradient min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
                     disabled={isLoading}
                   >
                     {isLoading ? t('auth.btn.creating') : t('auth.btn.create')}
