@@ -1,8 +1,8 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "kurdistan-places",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://kingosm.github.io/testnew",
+  "homepage": "https://kingosm.github.io/kurdistanplaces",
   "type": "module",
   "scripts": {
     "dev": "vite",
