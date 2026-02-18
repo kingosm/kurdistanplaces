@@ -70,6 +70,8 @@
     text-align: right;
     font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
     line-height: 2 !important;
+    letter-spacing: normal !important;
+    /* Fix for interrupted/disconnected words */
   }
 
   [dir="rtl"] h1,
