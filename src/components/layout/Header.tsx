@@ -57,16 +57,14 @@ export function Header() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2 md:gap-4 group"
+            className="flex items-center gap-2 md:gap-4 group shrink-0"
           >
-            <div className="w-10 h-10 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105">
-              <MapPin className="w-5 h-5 md:w-7 md:h-7 text-white" />
+            <div className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105 shrink-0">
+              <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-none whitespace-nowrap">
-                KURDISTAN<span className="text-primary">PLACES</span>
-              </h1>
-            </div>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
+              KURDISTAN<span className="text-primary">PLACES</span>
+            </h1>
           </Link>
 
           {/* Desktop Navigation */}
