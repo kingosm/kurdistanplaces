@@ -53,11 +53,11 @@ export function Header() {
         : "py-8 bg-transparent"
     )}>
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between relative h-full">
+        <div className="flex items-center justify-between">
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2 md:gap-4 group absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:left-0 z-10"
+            className="flex items-center gap-2 md:gap-4 group"
           >
             <div className="w-10 h-10 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105">
               <MapPin className="w-5 h-5 md:w-7 md:h-7 text-white" />
