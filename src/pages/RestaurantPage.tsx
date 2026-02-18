@@ -556,12 +556,16 @@ const RestaurantPage = () => {
                         reviews.map((review, idx) => (
                           <div key={review.id} className="animate-reveal" style={{ animationDelay: `${idx * 0.1}s` }}>
                             <ReviewCard
+                              reviewId={review.id}
+                              userId={review.user_id}
+                              currentUserId={user?.id}
                               userName={review.profiles?.full_name || "Food Explorer"}
                               userAvatar={review.profiles && 'avatar_url' in review.profiles ? (review.profiles as any).avatar_url : null}
                               rating={review.rating}
                               comment={review.comment || undefined}
                               createdAt={review.created_at}
                               photos={review.review_photos?.map(p => p.photo_url)}
+                              onDelete={() => fetchReviews(restaurant.id)}
                             />
                           </div>
                         ))

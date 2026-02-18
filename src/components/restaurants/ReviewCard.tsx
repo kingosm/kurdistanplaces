@@ -2,28 +2,76 @@ import { StarRating } from "./StarRating";
 import { formatDistanceToNow } from "date-fns";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Trash2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ReviewCardProps {
+  reviewId: string;
+  userId: string;
+  currentUserId?: string;
   userName?: string;
   userAvatar?: string | null;
   rating: number;
   comment?: string;
   createdAt: string;
   photos?: string[];
+  onDelete?: () => void;
 }
 
 export function ReviewCard({
+  reviewId,
+  userId,
+  currentUserId,
   userName,
   userAvatar,
   rating,
   comment,
   createdAt,
   photos = [],
+  onDelete
 }: ReviewCardProps) {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const isOwner = currentUserId === userId;
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this review?")) return;
+
+    setIsDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("reviews")
+        .delete()
+        .eq("id", reviewId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Review deleted",
+        description: "Your review has been removed.",
+      });
+
+      if (onDelete) onDelete();
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete review",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
-    <div className="bg-card border border-border rounded-xl p-4 shadow-soft">
+    <div className="bg-card border border-border rounded-xl p-4 shadow-soft group relative">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden shrink-0">
@@ -42,7 +90,21 @@ export function ReviewCard({
             </p>
           </div>
         </div>
-        <StarRating rating={rating} size="sm" />
+        <div className="flex items-center gap-2">
+          <StarRating rating={rating} size="sm" />
+          {isOwner && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="h-8 w-8 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100"
+              title={t ? t('review.delete') : "Delete review"}
+            >
+              {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            </Button>
+          )}
+        </div>
       </div>
       {comment && (
         <p className="text-sm text-muted-foreground leading-relaxed mb-4">
