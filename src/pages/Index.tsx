@@ -90,10 +90,10 @@ const Index = () => {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-5xl mx-auto space-y-12 animate-reveal text-center">
+          <div className="max-w-5xl mx-auto space-y-12 text-center">
             <div className="space-y-6">
               <span className="place-badge mx-auto">Discovery Guide</span>
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.8] rtl:leading-[1.5] mb-8">Kurdistan Places</h1>
+              <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8">Kurdistan Places</h1>
               <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">The ultimate discovery guide to Kurdistan's most unique destinations.</p>
             </div>
 
