@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "@/hooks/use-location";
 import { Utensils, ShoppingBag, Wrench, Smartphone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Redundant calculateDistance removed (now in useLocation hook)
 
@@ -13,6 +15,35 @@ const Index = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { userLocation, isLoadingLocation, locationError, requestLocation, calculateDistance } = useLocation();
+
+  const [stats, setStats] = useState({ places: 0, community: 0 });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const { count: placesCount } = await supabase
+          .from('restaurants')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: communityCount } = await supabase
+          .from('profiles')
+          .select('*', { count: 'exact', head: true });
+
+        setStats({
+          places: placesCount || 0,
+          community: communityCount || 0
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+
+    fetchStats();
+
+    // Optional: Subscribe to changes for real-time updates (simplified for now to just fetch on mount which is efficient)
+    // For true "live" updates we would use supabase.channel, but count queries on large tables via realtime can be heavy.
+    // Fetching on mount ensures accurate numbers every visit.
+  }, []);
 
   const heroImages = [
     "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800", // Kurdish Stew
@@ -52,12 +83,12 @@ const Index = () => {
 
             <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
               <div className="flex flex-col gap-1 items-center">
-                <span className="text-foreground text-3xl font-black">500+</span>
+                <span className="text-foreground text-3xl font-black">{stats.places}+</span>
                 <span>{t('hero.collections')}</span>
               </div>
               <div className="w-px h-12 bg-white/10" />
               <div className="flex flex-col gap-1 items-center">
-                <span className="text-foreground text-3xl font-black">20k+</span>
+                <span className="text-foreground text-3xl font-black">{stats.community}+</span>
                 <span>{t('hero.stats.diners')}</span>
               </div>
             </div>
