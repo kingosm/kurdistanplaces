@@ -53,10 +53,18 @@
     font-family: 'Outfit', sans-serif;
   }
 
+  @font-face {
+    font-family: 'NRT-Reg';
+    src: url('/fonts/NRT-Reg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+
   /* RTL Support */
   [dir="rtl"] {
     text-align: right;
-    font-family: 'Tahoma', 'Arial', sans-serif;
+    font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
     /* Better font for Kurdish/Arabic */
   }
 
@@ -68,7 +76,7 @@
   [dir="rtl"] h6 {
     line-height: 1.5;
     /* Increased line height for taller glyphs */
-    font-family: 'Tahoma', 'Arial', sans-serif;
+    font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
   }
 
   [dir="rtl"] p,
