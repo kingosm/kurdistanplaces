@@ -53,14 +53,17 @@ export function Header() {
         : "py-8 bg-transparent"
     )}>
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between relative h-full">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 md:gap-4 group">
+          <Link
+            to="/"
+            className="flex items-center gap-2 md:gap-4 group absolute left-1/2 -translate-x-1/2 lg:static lg:translate-x-0 lg:left-0 z-10"
+          >
             <div className="w-10 h-10 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105">
               <MapPin className="w-5 h-5 md:w-7 md:h-7 text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-none whitespace-nowrap">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-none whitespace-nowrap">
                 KURDISTAN<span className="text-primary">PLACES</span>
               </h1>
             </div>
