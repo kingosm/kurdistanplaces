@@ -90,14 +90,10 @@ const Index = () => {
         </div>
 
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-5xl mx-auto space-y-12 text-center">
-            <div className="space-y-6">
-              <span className="place-badge mx-auto">{t('hero.badge')}</span>
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8">{t('hero.title')}</h1>
-              <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">{t('hero.desc.premium')}</p>
+          <div className="max-w-5xl mx-auto text-center">
+            <div className="mb-12">
+              <span className="place-badge mx-auto block mb-6">{t('hero.badge')}</span><h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8">{t('hero.title')}</h1><p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">{t('hero.desc.premium')}</p>
             </div>
-
-            {/* Search Bar removed to enforce hierarchical selection via Provinces */}
 
             <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
               <div className="flex flex-col gap-1 items-center">
