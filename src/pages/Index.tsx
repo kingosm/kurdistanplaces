@@ -81,15 +81,13 @@ const Index = () => {
       {/* Discovery Hero */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1623864190822-487053e1673b?w=1280"
-            alt=""
-            className="w-full h-full object-cover opacity-40 scale-105"
+          <div
+            className="w-full h-full bg-cover bg-center opacity-40 scale-105"
+            style={{ backgroundImage: `url('https://images.unsplash.com/photo-1623864190822-487053e1673b?w=1280')` }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
 
-        <style>{`img { display: none !important; }`}</style>
         <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto text-center">
             <div className="mb-12">
