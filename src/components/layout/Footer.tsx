@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Mail, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { EditableText } from "@/components/cms/EditableText";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -21,12 +22,12 @@ export const Footer = () => {
                   KURDISTAN<span className="text-primary">PLACES</span>
                 </span>
                 <span className="text-[10px] uppercase tracking-[0.4em] font-black text-primary opacity-70">
-                  {t('footer.global_discovery')}
+                  <EditableText contentKey="footer.global_discovery" fallback={t('footer.global_discovery')} />
                 </span>
               </div>
             </Link>
             <p className="text-muted-foreground leading-relaxed max-w-sm font-medium">
-              {t('footer.description')}
+              <EditableText contentKey="footer.description" fallback={t('footer.description')} as="span" />
             </p>
             <div className="flex gap-4 pt-2">
               {[Instagram, Twitter, Facebook].map((Icon, i) => (
@@ -44,21 +45,21 @@ export const Footer = () => {
           {/* Navigation */}
           <div>
             <h4 className="text-xs font-black mb-8 uppercase tracking-[0.3em] text-primary">
-              {t('footer.nav.title')}
+              <EditableText contentKey="footer.nav.title" fallback={t('footer.nav.title')} />
             </h4>
             <nav className="flex flex-col gap-6">
               {[
-                { to: '/', label: t('footer.nav.home') },
-                { to: '/categories', label: t('footer.nav.categories') },
-                { to: '/nearby', label: t('footer.nav.nearby') },
-                { to: '#', label: t('footer.nav.partner') },
+                { to: '/', key: 'footer.nav.home' },
+                { to: '/categories', key: 'footer.nav.categories' },
+                { to: '/nearby', key: 'footer.nav.nearby' },
+                { to: '#', key: 'footer.nav.partner' },
               ].map((link, i) => (
                 <Link
                   key={i}
                   to={link.to}
                   className="text-lg font-bold text-muted-foreground hover:text-foreground transition-all hover:translate-x-2"
                 >
-                  {link.label}
+                  <EditableText contentKey={link.key} fallback={t(link.key)} />
                 </Link>
               ))}
             </nav>
@@ -67,7 +68,7 @@ export const Footer = () => {
           {/* Contact */}
           <div className="space-y-8">
             <h4 className="text-xs font-black mb-8 uppercase tracking-[0.3em] text-primary">
-              {t('footer.contact.title')}
+              <EditableText contentKey="footer.contact.title" fallback={t('footer.contact.title')} />
             </h4>
             <div className="space-y-6">
               <a href="mailto:hello@kurdistanplaces.com" className="flex items-center gap-4 group">
@@ -75,8 +76,12 @@ export const Footer = () => {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">{t('footer.contact.email')}</span>
-                  <span className="text-foreground font-bold group-hover:text-primary transition-colors">hello@kurdistanplaces.com</span>
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">
+                    <EditableText contentKey="footer.contact.email" fallback={t('footer.contact.email')} />
+                  </span>
+                  <span className="text-foreground font-bold group-hover:text-primary transition-colors">
+                    <EditableText contentKey="footer.email_value" fallback="hello@kurdistanplaces.com" />
+                  </span>
                 </div>
               </a>
               <a href="tel:+9647500000000" className="flex items-center gap-4 group">
@@ -84,8 +89,12 @@ export const Footer = () => {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">{t('footer.contact.phone')}</span>
-                  <span className="text-foreground font-bold group-hover:text-primary transition-colors">+964 750 000 0000</span>
+                  <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider block mb-1">
+                    <EditableText contentKey="footer.contact.phone" fallback={t('footer.contact.phone')} />
+                  </span>
+                  <span className="text-foreground font-bold group-hover:text-primary transition-colors">
+                    <EditableText contentKey="footer.phone_value" fallback="+964 750 000 0000" />
+                  </span>
                 </div>
               </a>
             </div>

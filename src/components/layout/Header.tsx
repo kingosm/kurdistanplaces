@@ -13,8 +13,9 @@ import {
 import { LanguageSwitcher } from "../LanguageSwitcher";
 
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useUser } from "@/contexts/UserContext"; // Import useUser
+import { useUser } from "@/contexts/UserContext";
 import { cn } from "@/lib/utils";
+import { EditableText } from "@/components/cms/EditableText";
 
 export function Header() {
   const { t, isRTL } = useLanguage();
@@ -69,23 +70,23 @@ export function Header() {
           <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
             <Link to="/" className="group shrink-0">
               <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
-                KURDISTAN<span className="text-primary">PLACES</span>
+                <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
               </h1>
             </Link>
 
-            {/* Desktop Navigation - Shifted to be near the word */}
+            {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
               {[
-                { to: '/', label: t('nav.home') },
-                { to: '/categories', label: t('nav.categories') },
-                { to: '/nearby', label: t('nav.nearby') },
+                { to: '/', key: 'nav.home' },
+                { to: '/categories', key: 'nav.categories' },
+                { to: '/nearby', key: 'nav.nearby' },
               ].map((link, i) => (
                 <Link
                   key={i}
                   to={link.to}
                   className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
                 >
-                  {link.label}
+                  <EditableText contentKey={link.key} fallback={t(link.key)} />
                 </Link>
               ))}
             </nav>
@@ -168,9 +169,9 @@ export function Header() {
           <div className="lg:hidden py-10 px-6 gourmet-border bg-secondary/95 backdrop-blur-3xl mt-4 animate-reveal shadow-3xl overflow-hidden" dir={isRTL ? "rtl" : "ltr"}>
             <nav className="flex flex-col gap-6">
               {[
-                { to: '/', label: t('nav.home') },
-                { to: '/categories', label: t('nav.categories') },
-                { to: '/nearby', label: t('nav.nearby') },
+                { to: '/', key: 'nav.home' },
+                { to: '/categories', key: 'nav.categories' },
+                { to: '/nearby', key: 'nav.nearby' },
               ].map((link, i) => (
                 <Link
                   key={i}
@@ -178,7 +179,7 @@ export function Header() {
                   className="text-lg font-sans font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {link.label}
+                  <EditableText contentKey={link.key} fallback={t(link.key)} />
                 </Link>
               ))}
               {!user && (

@@ -7,6 +7,7 @@ import { MapPin, Navigation, Loader2, UtensilsCrossed, ShoppingBag, Wrench, Smar
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "@/hooks/use-location";
 import { cn } from "@/lib/utils";
+import { EditableText } from "@/components/cms/EditableText";
 
 export interface Restaurant {
   id: string;
@@ -143,15 +144,15 @@ const NearbyPage = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
             <div className="space-y-4">
               <div className="place-badge">
-                {t('nearby.badge.premium')}
+                <EditableText contentKey="nearby.badge.premium" fallback={t('nearby.badge.premium')} />
               </div>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.2] pt-2 pb-2">
-                {t('nearby.title')}
+                <EditableText contentKey="nearby.title" fallback={t('nearby.title')} as="span" />
               </h1>
               <p className="text-lg text-muted-foreground font-medium max-w-xl">
                 {userLocation
-                  ? t('nearby.subtitle.location')
-                  : t('nearby.subtitle.no_location')}
+                  ? <EditableText contentKey="nearby.subtitle.location" fallback={t('nearby.subtitle.location')} as="span" />
+                  : <EditableText contentKey="nearby.subtitle.no_location" fallback={t('nearby.subtitle.no_location')} as="span" />}
               </p>
             </div>
 

@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { z } from "zod";
+import { EditableText } from "@/components/cms/EditableText";
 
 const AuthPage = () => {
   const { t } = useLanguage();
@@ -223,7 +224,9 @@ const AuthPage = () => {
               </div>
             </Link>
             <div className="flex flex-col items-center gap-3 mb-6">
-              <span className="text-primary text-sm font-black uppercase tracking-[0.4em]">{t('auth.get_started')}</span>
+              <span className="text-primary text-sm font-black uppercase tracking-[0.4em]">
+                <EditableText contentKey="auth.get_started" fallback={t('auth.get_started')} />
+              </span>
               <h1 className="text-5xl font-black tracking-tighter leading-normal pt-2 pb-2">
                 KURDISTAN<span className="text-primary">PLACES</span>
               </h1>
@@ -235,8 +238,12 @@ const AuthPage = () => {
           <div className="modern-card p-8 md:p-12 shadow-primary/5">
             <Tabs defaultValue="signin" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-12 h-14 p-1 bg-secondary/50 border border-white/5 rounded-2xl">
-                <TabsTrigger value="signin" className="font-bold text-xs uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white rounded-xl transition-all">{t('auth.tab.signin')}</TabsTrigger>
-                <TabsTrigger value="signup" className="font-bold text-xs uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white rounded-xl transition-all">{t('auth.tab.signup')}</TabsTrigger>
+                <TabsTrigger value="signin" className="font-bold text-xs uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white rounded-xl transition-all">
+                  <EditableText contentKey="auth.tab.signin" fallback={t('auth.tab.signin')} />
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="font-bold text-xs uppercase tracking-widest data-[state=active]:bg-primary data-[state=active]:text-white rounded-xl transition-all">
+                  <EditableText contentKey="auth.tab.signup" fallback={t('auth.tab.signup')} />
+                </TabsTrigger>
               </TabsList>
 
               <div className="mb-4 text-center">
@@ -245,7 +252,9 @@ const AuthPage = () => {
               <TabsContent value="signin" className="animate-reveal">
                 <form onSubmit={handleSignIn} className="space-y-8">
                   <div className="space-y-4">
-                    <Label htmlFor="signin-email" className="text-xs font-black uppercase tracking-widest opacity-60 ml-1">{t('auth.email')}</Label>
+                    <Label htmlFor="signin-email" className="text-xs font-black uppercase tracking-widest opacity-60 ml-1">
+                      <EditableText contentKey="auth.email" fallback={t('auth.email')} />
+                    </Label>
                     <div className="relative group">
                       <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none group-focus-within:text-primary transition-colors">
                         <Mail className="w-5 h-5 opacity-40" />
@@ -268,7 +277,7 @@ const AuthPage = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between ml-1">
                       <Label htmlFor="signin-password" className="text-xs font-black uppercase tracking-widest opacity-60">
-                        {t('auth.password')}
+                        <EditableText contentKey="auth.password" fallback={t('auth.password')} />
                       </Label>
                       <Link
                         to="/forgot-password"

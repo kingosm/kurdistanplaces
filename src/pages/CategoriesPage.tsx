@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { EditableText } from "@/components/cms/EditableText";
 
 interface Category {
   id: string;
@@ -82,13 +83,13 @@ const CategoriesPage = () => {
         <div className="container mx-auto px-6 relative z-10">
           <div className="mb-20 animate-reveal">
             <div className="place-badge mb-6">
-              {t('categories.badge.premium')}
+              <EditableText contentKey="categories.badge.premium" fallback={t('categories.badge.premium')} />
             </div>
             <h1 className="text-6xl md:text-9xl font-black mb-6 tracking-tighter leading-none">
-              {t('categories.explore_provinces')}
+              <EditableText contentKey="categories.explore_provinces" fallback={t('categories.explore_provinces')} as="span" />
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl leading-relaxed">
-              {t('categories.select_province')}
+              <EditableText contentKey="categories.select_province" fallback={t('categories.select_province')} as="span" />
             </p>
           </div>
 

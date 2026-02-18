@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { UserProvider } from "./contexts/UserContext";
+import { EditModeProvider } from "./contexts/EditModeContext";
+import { AdminToolbar } from "./components/cms/AdminToolbar";
 import ScrollToTop from "./components/ScrollToTop";
 
 // Lazy load pages for performance
@@ -37,27 +39,30 @@ const App = () => (
     <TooltipProvider>
       <LanguageProvider>
         <UserProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter basename={import.meta.env.BASE_URL}>
-            <ScrollToTop />
-            <Suspense fallback={<div className="min-h-screen bg-background" />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/categories" element={<CategoriesPage />} />
-                <Route path="/category/:slug" element={<CategoryPage />} />
-                <Route path="/restaurant/:slug" element={<RestaurantPage />} />
-                <Route path="/nearby" element={<NearbyPage />} />
-                <Route path="/favorites" element={<FavoritesPage />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
+          <EditModeProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter basename={import.meta.env.BASE_URL}>
+              <AdminToolbar />
+              <ScrollToTop />
+              <Suspense fallback={<div className="min-h-screen bg-background" />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/categories" element={<CategoriesPage />} />
+                  <Route path="/category/:slug" element={<CategoryPage />} />
+                  <Route path="/restaurant/:slug" element={<RestaurantPage />} />
+                  <Route path="/nearby" element={<NearbyPage />} />
+                  <Route path="/favorites" element={<FavoritesPage />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </EditModeProvider>
         </UserProvider>
       </LanguageProvider>
     </TooltipProvider>

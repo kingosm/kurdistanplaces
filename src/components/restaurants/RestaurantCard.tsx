@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Star, MapPin, Navigation } from "lucide-react";
+import { Star, MapPin, Navigation, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEditMode } from "@/contexts/EditModeContext";
 
 interface RestaurantCardProps {
   id: string;
@@ -23,6 +24,7 @@ export function RestaurantCard({
   reviewCount = 0,
   distance,
 }: RestaurantCardProps) {
+  const { isEditMode } = useEditMode();
   return (
     <Link
       to={`/restaurant/${slug}`}
@@ -55,6 +57,18 @@ export function RestaurantCard({
             {rating > 0 ? rating.toFixed(1) : "NEW"}
           </span>
         </div>
+
+        {/* Edit in Admin badge — only visible in edit mode */}
+        {isEditMode && (
+          <Link
+            to="/admin"
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1.5 bg-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg hover:bg-amber-400 transition-colors"
+          >
+            <Pencil className="w-3 h-3" />
+            Edit in Admin
+          </Link>
+        )}
       </div>
 
       {/* Content */}
