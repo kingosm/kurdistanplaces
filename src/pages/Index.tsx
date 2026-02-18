@@ -93,7 +93,7 @@ const Index = () => {
           <div className="max-w-5xl mx-auto space-y-12 animate-reveal text-center">
             <div className="space-y-6">
               <span className="place-badge mx-auto">{t('hero.badge')}</span>
-              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.8] rtl:leading-[1.5] mb-8">{t('hero.title.part1')} <br /><span className="text-primary">{t('hero.title.part2')}</span></h1>
+              <h1 className="text-6xl md:text-9xl font-black tracking-tighter leading-[0.8] rtl:leading-[1.5] mb-8">{t('hero.title')}</h1>
               <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed">{t('hero.desc.premium')}</p>
             </div>
 
