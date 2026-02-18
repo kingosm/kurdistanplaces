@@ -98,7 +98,7 @@ export function ReviewCard({
               size="icon"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="h-8 w-8 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors opacity-0 group-hover:opacity-100"
+              className="h-8 w-8 text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100"
               title={t ? t('review.delete') : "Delete review"}
             >
               {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
