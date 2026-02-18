@@ -45,6 +45,22 @@ const Index = () => {
     // Fetching on mount ensures accurate numbers every visit.
   }, []);
 
+  // Format count to round up to nearest 50 and use 'k' for thousands
+  const formatCount = (count: number) => {
+    if (count === 0) return "0";
+
+    // Round up to nearest 50
+    // e.g. 49 -> 50, 90 -> 100
+    const rounded = Math.ceil(count / 50) * 50;
+
+    // Format thousands
+    if (rounded >= 1000) {
+      return (rounded / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+
+    return rounded.toString();
+  };
+
   const heroImages = [
     "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=800", // Kurdish Stew
     "https://images.unsplash.com/photo-1563379091339-03b21bc4a4f8?w=800", // Dolma
@@ -83,12 +99,12 @@ const Index = () => {
 
             <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
               <div className="flex flex-col gap-1 items-center">
-                <span className="text-foreground text-3xl font-black">{stats.places}+</span>
+                <span className="text-foreground text-3xl font-black">{formatCount(stats.places)}+</span>
                 <span>{t('hero.collections')}</span>
               </div>
               <div className="w-px h-12 bg-white/10" />
               <div className="flex flex-col gap-1 items-center">
-                <span className="text-foreground text-3xl font-black">{stats.community}+</span>
+                <span className="text-foreground text-3xl font-black">{formatCount(stats.community)}+</span>
                 <span>{t('hero.stats.diners')}</span>
               </div>
             </div>
