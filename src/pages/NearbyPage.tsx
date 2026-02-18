@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Layout } from "@/components/layout/Layout";
 import { RestaurantCard } from "@/components/restaurants/RestaurantCard";
 import { Button } from "@/components/ui/button";
-import { MapPin, Navigation, Loader2, UtensilsCrossed } from "lucide-react";
+import { MapPin, Navigation, Loader2, UtensilsCrossed, ShoppingBag, Wrench, Smartphone, Store } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "@/hooks/use-location";
 import { cn } from "@/lib/utils";
@@ -21,55 +21,42 @@ export interface Restaurant {
   review_count?: number;
   distance?: number;
   category_id?: string;
+  categories?: {
+    slug: string;
+  };
 }
 
 interface Category {
   id: string;
   name: string;
   slug: string;
-  icon?: string;
+  icon?: any;
 }
+
+const STATIC_CATEGORIES: Category[] = [
+  { id: 'restaurants', name: 'Restaurants', slug: 'restaurants', icon: UtensilsCrossed },
+  { id: 'markets', name: 'Markets', slug: 'markets', icon: ShoppingBag },
+  { id: 'mechanics', name: 'Mechanics', slug: 'mechanics', icon: Wrench },
+  { id: 'mobile-shops', name: 'Mobile Shops', slug: 'mobile-shops', icon: Smartphone },
+  { id: 'candy-shop', name: 'Candy Shop', slug: 'candy-shop', icon: Store },
+];
 
 const NearbyPage = () => {
   const { t, translateCategoryName } = useLanguage();
   const { userLocation, isLoadingLocation, locationError, requestLocation, calculateDistance } = useLocation();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      // Define the desired order and slugs
-      const desiredSlugs = ['restaurants', 'markets', 'mechanics', 'mobile-shops', 'candy-shop'];
-
-      const { data, error } = await (supabase as any)
-        .from("categories")
-        .select("*")
-        .eq("category_type", "vertical")
-        .is("parent_id", null)
-        .in("slug", desiredSlugs);
-
-      if (error) {
-        console.error("Error fetching categories:", error);
-        return;
-      }
-
-      if (data) {
-        // Sort data to match desiredSlugs order
-        const sortedData = desiredSlugs.map(slug => data.find((c: Category) => c.slug === slug)).filter(Boolean);
-        setCategories(sortedData);
-      }
-    } catch (e) {
-      console.error("Failed to fetch categories", e);
-    }
-  }, []);
+  // We rely on static categories now to ensure consistency
+  const categories = STATIC_CATEGORIES;
 
   const fetchRestaurants = useCallback(async () => {
     try {
+      // Join with categories to get the slug for filtering
       const { data: restaurantsData, error } = await (supabase as any)
         .from("restaurants")
-        .select("*")
+        .select("*, categories(slug)")
         .eq("is_visible", true);
 
       if (error) {
@@ -117,12 +104,11 @@ const NearbyPage = () => {
 
   useEffect(() => {
     fetchRestaurants();
-    fetchCategories();
     requestLocation();
 
     const timer = setTimeout(() => setIsLoading(false), 5000);
     return () => clearTimeout(timer);
-  }, [fetchRestaurants, fetchCategories]);
+  }, [fetchRestaurants]);
 
   const sortedRestaurants = userLocation
     ? [...restaurants]
@@ -139,9 +125,9 @@ const NearbyPage = () => {
             : undefined,
       }))
       .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
-      .filter((r) => (r.distance ?? Infinity) <= 5) // Max 5km distance
-      .filter((r) => selectedCategory ? r.category_id === selectedCategory : true)
-    : restaurants;
+      .filter((r) => (r.distance ?? Infinity) <= 50) // Increased range to find more items for testing
+      .filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true)
+    : restaurants.filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true);
 
   return (
     <Layout>
@@ -193,37 +179,36 @@ const NearbyPage = () => {
           </div>
 
           {/* Category Filter Pills */}
-          {categories.length > 0 && (
-            <div className="flex items-center gap-3 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex items-center gap-3 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            <Button
+              variant="ghost"
+              onClick={() => setSelectedCategorySlug(null)}
+              className={cn(
+                "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
+                selectedCategorySlug === null
+                  ? "bg-primary text-white border-primary"
+                  : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
+              )}
+            >
+              All
+            </Button>
+            {categories.map((category) => (
               <Button
+                key={category.id}
                 variant="ghost"
-                onClick={() => setSelectedCategory(null)}
+                onClick={() => setSelectedCategorySlug(category.slug === selectedCategorySlug ? null : category.slug)}
                 className={cn(
                   "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
-                  selectedCategory === null
-                    ? "bg-primary text-white border-primary"
+                  selectedCategorySlug === category.slug
+                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
                     : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
                 )}
               >
-                All
+                {category.icon && <category.icon className="w-4 h-4 mr-2" />}
+                {translateCategoryName(category.name)}
               </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant="ghost"
-                  onClick={() => setSelectedCategory(category.id === selectedCategory ? null : category.id)}
-                  className={cn(
-                    "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
-                    selectedCategory === category.id
-                      ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
-                      : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
-                  )}
-                >
-                  {translateCategoryName(category.name)}
-                </Button>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
 
           {locationError && (
             <div className="mb-8 p-4 glass-card border-rose-500/20 bg-rose-500/5 rounded-2xl text-rose-500 font-bold flex items-center gap-3">
@@ -265,10 +250,10 @@ const NearbyPage = () => {
                 <Navigation className="w-10 h-10 text-primary opacity-50" />
               </div>
               <p className="text-2xl font-black text-muted-foreground tracking-tight">{t('index.no_results')}</p>
-              {selectedCategory && (
+              {selectedCategorySlug && (
                 <Button
                   variant="link"
-                  onClick={() => setSelectedCategory(null)}
+                  onClick={() => setSelectedCategorySlug(null)}
                   className="mt-4 text-primary"
                 >
                   Clear Filters
