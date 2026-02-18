@@ -22,6 +22,7 @@ export interface Restaurant {
   distance?: number;
   category_id?: string;
   categories?: {
+    name: string;
     slug: string;
   };
 }
@@ -53,10 +54,10 @@ const NearbyPage = () => {
 
   const fetchRestaurants = useCallback(async () => {
     try {
-      // Join with categories to get the slug for filtering
+      // Join with categories to get name and slug
       const { data: restaurantsData, error } = await (supabase as any)
         .from("restaurants")
-        .select("*, categories(slug)")
+        .select("*, categories(name, slug)")
         .eq("is_visible", true);
 
       if (error) {
@@ -110,6 +111,11 @@ const NearbyPage = () => {
     return () => clearTimeout(timer);
   }, [fetchRestaurants]);
 
+  // Find the selected category NAME based on the selected slug
+  const selectedCategoryName = selectedCategorySlug
+    ? STATIC_CATEGORIES.find(c => c.slug === selectedCategorySlug)?.name
+    : null;
+
   const sortedRestaurants = userLocation
     ? [...restaurants]
       .map((restaurant) => ({
@@ -126,8 +132,9 @@ const NearbyPage = () => {
       }))
       .sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity))
       .filter((r) => (r.distance ?? Infinity) <= 5) // Max 5km distance
-      .filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true)
-    : restaurants.filter((r) => selectedCategorySlug ? r.categories?.slug === selectedCategorySlug : true);
+      // Filter by comparing Names (e.g. "Restaurants" === "Restaurants") instead of slugs
+      .filter((r) => selectedCategoryName ? r.categories?.name === selectedCategoryName : true)
+    : restaurants.filter((r) => selectedCategoryName ? r.categories?.name === selectedCategoryName : true);
 
   return (
     <Layout>
