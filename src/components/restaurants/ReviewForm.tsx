@@ -98,9 +98,69 @@ export function ReviewForm({ restaurantId, onReviewSubmitted }: ReviewFormProps)
         .select()
         .single();
 
-      if (reviewError) throw reviewError;
+      if (reviewError) {
+        // Self-healing: If profile is missing (FK violation), create it and retry
+        if (reviewError.code === '23503') {
+          console.warn("Profile missing for user, attempting to create...", user.id);
 
-      // 2. Insert Photos (if any)
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: user.id,
+              user_id: user.id,
+              full_name: user.user_metadata.full_name || user.email?.split('@')[0] || 'Foodie',
+              avatar_url: user.user_metadata.avatar_url
+            });
+
+          if (profileError) {
+            console.error("Failed to auto-create profile:", profileError);
+            throw reviewError; // Throw original error if fix fails
+          }
+
+          // Retry Review Insert
+          const { data: retryData, error: retryError } = await (supabase as any)
+            .from("reviews")
+            .insert({
+              restaurant_id: restaurantId,
+              user_id: user.id,
+              rating,
+              comment: comment.trim() || null,
+            })
+            .select()
+            .single();
+
+          if (retryError) throw retryError;
+
+          // If successful, proceed with photos using retryData
+          if (photos.length > 0 && retryData) {
+            const photoInserts = photos.map(url => ({
+              review_id: retryData.id,
+              photo_url: url
+            }));
+
+            const { error: photoError } = await (supabase as any)
+              .from("review_photos")
+              .insert(photoInserts);
+
+            if (photoError) console.error("Error linking photos:", photoError);
+          }
+
+          toast({
+            title: t('review.submitted'),
+            description: t('review.thank_you'),
+          });
+
+          setRating(0);
+          setComment("");
+          setPhotos([]);
+          onReviewSubmitted();
+          return; // Exit success path
+        }
+
+        throw reviewError;
+      }
+
+      // 2. Insert Photos (if any) - Normal Path
       if (photos.length > 0 && reviewData) {
         const photoInserts = photos.map(url => ({
           review_id: reviewData.id,
@@ -132,10 +192,11 @@ export function ReviewForm({ restaurantId, onReviewSubmitted }: ReviewFormProps)
       setPhotos([]);
       onReviewSubmitted();
     } catch (error) {
+      console.error("Review submission error:", error);
       const errorMessage = error instanceof Error ? error.message : t('review.error_desc');
       toast({
         title: t('review.error'),
-        description: errorMessage,
+        description: errorMessage + " (Check console for details)",
         variant: "destructive",
       });
     } finally {
