@@ -63,10 +63,7 @@ export function Header() {
             <div className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 group-hover:scale-105 shrink-0">
               <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
             </div>
-            <h1 className={cn(
-              "text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center",
-              isRTL && "font-kurdish text-3xl md:text-4xl"
-            )}>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground transition-colors group-hover:text-primary leading-[0.9] whitespace-nowrap flex items-center">
               KURDISTAN<span className="text-primary">PLACES</span>
             </h1>
           </Link>
@@ -81,10 +78,7 @@ export function Header() {
               <Link
                 key={i}
                 to={link.to}
-                className={cn(
-                  "font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap",
-                  isRTL ? "font-kurdish text-sm md:text-base tracking-normal" : "text-[10px] md:text-xs"
-                )}
+                className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap"
               >
                 {link.label}
               </Link>
@@ -119,13 +113,13 @@ export function Header() {
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link to="/profile" className="flex items-center gap-3 p-2">
                       <User className="w-4 h-4 text-primary" />
-                      <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.profile')}</span>
+                      <span className="font-medium">{t('nav.profile')}</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild className="cursor-pointer">
                     <Link to="/favorites" className="flex items-center gap-3 p-2">
                       <Heart className="w-4 h-4 text-rose-500" />
-                      <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.favorites')}</span>
+                      <span className="font-medium">{t('nav.favorites')}</span>
                     </Link>
                   </DropdownMenuItem>
                   {isAdmin && (
@@ -134,7 +128,7 @@ export function Header() {
                       <DropdownMenuItem asChild className="cursor-pointer">
                         <Link to="/admin" className="flex items-center gap-3 p-2">
                           <Settings className="w-4 h-4 text-amber-500" />
-                          <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.admin')}</span>
+                          <span className="font-medium">{t('nav.admin')}</span>
                         </Link>
                       </DropdownMenuItem>
                     </>
@@ -142,12 +136,12 @@ export function Header() {
                   <DropdownMenuSeparator className="opacity-10" />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer p-2">
                     <LogOut className="w-4 h-4 mr-3" />
-                    <span className={cn("font-medium", isRTL && "font-kurdish text-base")}>{t('nav.signout')}</span>
+                    <span className="font-medium">{t('nav.signout')}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className={cn("hidden lg:flex pill-button hero-gradient px-8 text-background", isRTL && "font-kurdish text-lg h-12")}>
+              <Button asChild className="hidden lg:flex pill-button hero-gradient px-8 text-background">
                 <Link to="/auth">{t('nav.signin')}</Link>
               </Button>
             )}
@@ -175,10 +169,7 @@ export function Header() {
                 <Link
                   key={i}
                   to={link.to}
-                  className={cn(
-                    "font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors",
-                    isRTL ? "font-kurdish text-2xl" : "text-lg"
-                  )}
+                  className="text-lg font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {link.label}
@@ -186,7 +177,7 @@ export function Header() {
               ))}
               {!user && (
                 <div className="px-4 pt-6 border-t border-white/5">
-                  <Button asChild className={cn("w-full pill-button hero-gradient text-background", isRTL && "font-kurdish text-xl h-14")}>
+                  <Button asChild className="w-full pill-button hero-gradient text-background">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       {t('nav.signin')}
                     </Link>
