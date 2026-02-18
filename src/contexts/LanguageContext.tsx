@@ -32,7 +32,7 @@ const translations: Record<Language, Record<string, string>> = {
         'hero.badge': 'Discover Your Next Favorite Place',
         'hero.title.part1': 'Find Great',
         'hero.title.part2': 'Places',
-        'hero.desc.premium': "The ultimate discovery guide to Kurdistan's most unique destinations, hidden gems, and localfavorites.",
+        'hero.desc.premium': "The ultimate discovery guide to Kurdistan's most unique destinations, hidden gems, and local favorites.",
         'hero.locating': 'Finding places nearby...',
         'hero.collections': 'Places',
         'hero.stats.diners': 'Explorer Community',

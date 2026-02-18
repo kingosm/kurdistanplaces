@@ -115,8 +115,6 @@ const Index = () => {
                 <span>{t('hero.stats.diners')}</span>
               </div>
             </div>
-            {/* Version Marker */}
-            <div className="absolute bottom-2 right-2 text-xs text-muted-foreground opacity-50">v1.1</div>
           </div>
         </div>
       </section>
