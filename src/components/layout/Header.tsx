@@ -78,21 +78,34 @@ export function Header() {
                 </h1>
               </Link>
 
-              {/* Desktop Navigation */}
+              {/* Desktop Navigation — each tab is individually draggable */}
               <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-                {[
-                  { to: '/', key: 'nav.home' },
-                  { to: '/categories', key: 'nav.categories' },
-                  { to: '/nearby', key: 'nav.nearby' },
-                ].map((link, i) => (
+                <EditableBlock id="nav_home" page="__global__">
                   <Link
-                    key={i}
-                    to={link.to}
+                    to="/"
                     className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
                   >
-                    <EditableText contentKey={link.key} fallback={t(link.key)} />
+                    <EditableText contentKey="nav.home" fallback={t('nav.home')} />
                   </Link>
-                ))}
+                </EditableBlock>
+
+                <EditableBlock id="nav_categories" page="__global__">
+                  <Link
+                    to="/categories"
+                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
+                  >
+                    <EditableText contentKey="nav.categories" fallback={t('nav.categories')} />
+                  </Link>
+                </EditableBlock>
+
+                <EditableBlock id="nav_nearby" page="__global__">
+                  <Link
+                    to="/nearby"
+                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
+                  >
+                    <EditableText contentKey="nav.nearby" fallback={t('nav.nearby')} />
+                  </Link>
+                </EditableBlock>
               </nav>
             </div>
           </EditableBlock>
