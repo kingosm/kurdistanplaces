@@ -1,5 +1,5 @@
 import { useRef, useCallback, useEffect, KeyboardEvent, ReactNode } from "react";
-import { GripVertical, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, RotateCcw } from "lucide-react";
+import { GripVertical, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, RotateCcw, Move } from "lucide-react";
 import { useEditableLayout } from "@/hooks/useEditableLayout";
 import { useLayoutEditor } from "@/contexts/LayoutEditorContext";
 import { VisibilityToggles } from "@/components/cms/LayoutPresets";
@@ -41,18 +41,10 @@ const ALL_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
 
 /**
  * EditableBlock — production-ready drag + resize + lock + align wrapper.
- *
- * NORMAL MODE: zero-overhead passthrough <div>.
- * LAYOUT-EDIT MODE:
- *   — Full-block transparent overlay captures ALL pointer events
- *     (first click = select; second click+drag = move — links/buttons blocked)
- *   — 8 Resize handles (corners + edges) with font-size scaling
- *   — Lock/Unlock toggle button
- *   — Alignment mini-toolbar (Left / Center / Right) below element
- *   — Position badge (X / Y) and size badge (W × H F:px)
- *   — Arrow key fine-tune (1px / Shift = 10px)
- *   — Reset position, size & font button
- *   — CSS transform only — document flow preserved
+ * Updated:
+ * - NO transparent capture overlay (to allow nested interactions like sortable navs).
+ * - Explicit DRAG HANDLE in toolbar for moving the block.
+ * - Corner resize handles.
  */
 export function EditableBlock({ id, page, children, className }: EditableBlockProps) {
     const { layout, isSelected, select, deselect, update, isLayoutEditMode } =
@@ -81,7 +73,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (e.key === "Escape") { e.preventDefault(); deselect(); }
     }, [isSelected, locked, layout.x, layout.y, update, deselect]);
 
-    // ── Drag — works on the transparent overlay (entire block area) ──────────
+    // ── Drag — triggered by specific handle or toolbar button ────────────────
 
     const handleDragStart = useCallback((e: React.PointerEvent) => {
         if (locked) return;
@@ -165,12 +157,6 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (dir === "right") update({ x: prRect.right - elRect.right });
     }, [layout.x, layout.y, update]);
 
-    // ── Focus when selected ──────────────────────────────────────────────────
-
-    useEffect(() => {
-        if (isSelected && wrapperRef.current) wrapperRef.current.focus({ preventScroll: true });
-    }, [isSelected]);
-
     // ── Click-outside deselect ───────────────────────────────────────────────
 
     useEffect(() => {
@@ -211,6 +197,8 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
             }}
             tabIndex={0}
             onKeyDown={handleKeyDown}
+            onClickCapture={(e) => { if (isLayoutEditMode) e.preventDefault(); }}
+            onClick={(e) => { e.stopPropagation(); select(); }}
         >
             {/* actual content */}
             {children}
@@ -224,32 +212,6 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                         ? "ring-2 ring-amber-400 ring-offset-1"
                         : "group-hover:ring-2 group-hover:ring-amber-400/50 group-hover:ring-dashed"
             )} />
-
-            {/* ── TRANSPARENT OVERLAY — THE KEY FIX ────────────────────────── */}
-            {/* Sits above all children (Links, buttons, etc.) and captures ALL */}
-            {/* pointer events so drag works from anywhere on the element.      */}
-            {/* First click = select only. Subsequent pointer-down = drag start. */}
-            {!locked && (
-                <div
-                    className={cn(
-                        "absolute inset-0 z-30 touch-none select-none",
-                        isSelected
-                            ? "cursor-grab active:cursor-grabbing"
-                            : "cursor-pointer"
-                    )}
-                    onPointerDown={(e) => {
-                        e.stopPropagation();
-                        if (isSelected) {
-                            handleDragStart(e);  // already selected → start drag
-                        } else {
-                            select();            // first touch → just select
-                        }
-                    }}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
-                    title={isSelected ? "Drag to move anywhere" : "Click to select, then drag"}
-                />
-            )}
 
             {/* ── 8 Resize handles ─────────────────────────────────────────── */}
             {isSelected && !locked && ALL_HANDLES.map(handle => (
@@ -291,18 +253,26 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 </div>
             )}
 
-            {/* ── Drag label (visible on hover when not selected) ───────────── */}
-            {!isSelected && !locked && (
-                <div className="absolute inset-0 z-31 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="bg-amber-500/90 text-black text-[9px] font-black px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
-                        <GripVertical className="w-2.5 h-2.5" /> Click to select
-                    </span>
-                </div>
-            )}
-
             {/* ── Selected toolbar — appears BELOW element ──────────────────── */}
             {isSelected && (
                 <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-0.5 bg-zinc-900/95 border border-zinc-700 rounded-full px-2 py-1 shadow-xl backdrop-blur-sm whitespace-nowrap">
+
+                    {/* Explicit Drag Handle */}
+                    {!locked && (
+                        <>
+                            <button
+                                onPointerDown={handleDragStart}
+                                onPointerMove={handlePointerMove}
+                                onPointerUp={handlePointerUp}
+                                title="Drag to move block"
+                                className="p-1 rounded bg-amber-500 hover:bg-amber-400 text-black shadow-sm mr-1 cursor-grab active:cursor-grabbing"
+                            >
+                                <Move className="w-3.5 h-3.5" />
+                            </button>
+                            <div className="w-px h-3 bg-zinc-600 mx-0.5" />
+                        </>
+                    )}
+
                     <button onClick={() => alignElement("left")} title="Align left" className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-white transition-colors"><AlignLeft className="w-3 h-3" /></button>
                     <button onClick={() => alignElement("center")} title="Align center" className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-white transition-colors"><AlignCenter className="w-3 h-3" /></button>
                     <button onClick={() => alignElement("right")} title="Align right" className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-white transition-colors"><AlignRight className="w-3 h-3" /></button>
