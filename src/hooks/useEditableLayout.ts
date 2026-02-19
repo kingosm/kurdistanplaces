@@ -1,8 +1,8 @@
-import { useLayoutEditor } from "@/contexts/LayoutEditorContext";
+import { useLayoutEditor, ElementLayout } from "@/contexts/LayoutEditorContext";
 
 /**
  * useEditableLayout — thin wrapper around LayoutEditorContext for a specific element.
- * Returns the current layout (x, y, width, height) for this element ID + page,
+ * Returns the current layout (x, y, width, height, fontSize) for this element ID + page,
  * respecting the active breakpoint automatically.
  */
 export function useEditableLayout(id: string, page: string) {
@@ -18,7 +18,7 @@ export function useEditableLayout(id: string, page: string) {
     const layout = getLayout(id, page);
     const isSelected = selectedId === id;
 
-    const update = (partial: Partial<{ x: number; y: number; width: number | null; height: number | null }>) => {
+    const update = (partial: Partial<ElementLayout>) => {
         setElementLayout(id, page, { ...layout, ...partial });
     };
 

@@ -21,6 +21,7 @@ export interface ElementLayout {
     y: number;
     width?: number | null;
     height?: number | null;
+    fontSize?: number | null;  // px — scales text inside the block
 }
 
 export interface VisibilityRule {
@@ -61,7 +62,7 @@ interface LayoutEditorContextType {
 
 const LayoutEditorContext = createContext<LayoutEditorContextType | undefined>(undefined);
 
-const DEFAULT_LAYOUT: ElementLayout = { x: 0, y: 0 };
+const DEFAULT_LAYOUT: ElementLayout = { x: 0, y: 0, fontSize: null };
 const LOCK_STORAGE_KEY = "cms_locked_elements";
 const VISIBILITY_STORAGE_KEY = "cms_element_visibility";
 
@@ -131,7 +132,12 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                 const loaded: Record<string, ElementLayout> = {};
                 for (const row of data) {
                     const key = makeKey(row.page_slug, row.breakpoint as Breakpoint, row.element_id);
-                    loaded[key] = { x: row.x, y: row.y, width: row.width ?? null, height: row.height ?? null };
+                    loaded[key] = {
+                        x: row.x, y: row.y,
+                        width: row.width ?? null,
+                        height: row.height ?? null,
+                        fontSize: (row as any).font_size ?? null,
+                    };
                 }
                 setSavedLayouts(loaded);
                 undoStack.current = []; redoStack.current = [];
@@ -244,6 +250,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                     element_id: idParts.join("|"),
                     x: l.x, y: l.y,
                     width: l.width ?? null, height: l.height ?? null,
+                    font_size: l.fontSize ?? null,
                     updated_at: new Date().toISOString(),
                 };
             });

@@ -66,6 +66,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
     const startPointer = useRef({ x: 0, y: 0 });
     const startLayout = useRef({ x: 0, y: 0 });
     const startSize = useRef({ w: 0, h: 0 });
+    const startFontSize = useRef<number>(16); // captured from computed style on resize start
 
     // ── Keyboard control ─────────────────────────────────────────────────────
 
@@ -103,9 +104,12 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (wrapperRef.current) {
             const r = wrapperRef.current.getBoundingClientRect();
             startSize.current = { w: r.width, h: r.height };
+            // Capture the current computed font size so we can scale it
+            const computed = parseFloat(getComputedStyle(wrapperRef.current).fontSize) || 16;
+            startFontSize.current = layout.fontSize ?? computed;
         }
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    }, [locked, select, layout.x, layout.y]);
+    }, [locked, select, layout.x, layout.y, layout.fontSize]);
 
     // ── Combined pointer move ────────────────────────────────────────────────
 
@@ -132,7 +136,11 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (handle.includes("s")) nh = snap(Math.max(40, startSize.current.h + dy));
         if (handle.includes("n")) { nh = snap(Math.max(40, startSize.current.h - dy)); ny = startLayout.current.y + dy; }
 
-        update({ x: nx, y: ny, width: nw, height: nh });
+        // Scale font size proportionally with width change
+        const widthRatio = nw / startSize.current.w;
+        const newFontSize = Math.round(Math.min(200, Math.max(8, startFontSize.current * widthRatio)));
+
+        update({ x: nx, y: ny, width: nw, height: nh, fontSize: newFontSize });
     }, [update]);
 
     const handlePointerUp = useCallback(() => {
@@ -200,6 +208,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 willChange: "transform",
                 width: layout.width ? `${layout.width}px` : undefined,
                 height: layout.height ? `${layout.height}px` : undefined,
+                fontSize: layout.fontSize ? `${layout.fontSize}px` : undefined,
                 // Red tint when hidden for current visitor context (visible only in edit mode)
                 opacity: hiddenForUser ? 0.45 : undefined,
                 outline: hiddenForUser ? "2px dashed #f43f5e" : undefined,
@@ -263,12 +272,13 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 </div>
             )}
 
-            {/* ── Size badge ─────────────────────────────────────────────────── */}
+            {/* ── Size + font badge ───────────────────────────────────────────── */}
             {isSelected && hasSize && (
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-50 bg-zinc-900/90 text-sky-400 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-sky-400/40 pointer-events-none whitespace-nowrap backdrop-blur-sm">
                     {layout.width ? `W:${Math.round(layout.width)}` : ""}
                     {layout.width && layout.height ? " " : ""}
                     {layout.height ? `H:${Math.round(layout.height)}` : ""}
+                    {layout.fontSize ? ` F:${Math.round(layout.fontSize)}px` : ""}
                 </div>
             )}
 
@@ -300,8 +310,8 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                     {/* Reset position */}
                     {(hasMoved || hasSize) && (
                         <button
-                            onClick={() => { update({ x: 0, y: 0, width: null, height: null }); }}
-                            title="Reset position & size"
+                            onClick={() => { update({ x: 0, y: 0, width: null, height: null, fontSize: null }); }}
+                            title="Reset position, size & font"
                             className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-amber-400 transition-colors"
                         >
                             <RotateCcw className="w-3 h-3" />
