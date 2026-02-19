@@ -75,12 +75,24 @@ export function EditableImage({
     };
 
     if (!isEditMode) {
-        return <img src={currentSrc} alt={alt} className={className} />;
+        return (
+            <img
+                src={currentSrc}
+                alt={alt}
+                className={cn("object-cover", className)}
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
+        );
     }
 
     return (
         <div className={cn("relative group", className)}>
-            <img src={currentSrc} alt={alt} className="w-full h-full object-cover" />
+            <img
+                src={currentSrc}
+                alt={alt}
+                className="w-full h-full object-cover"
+                onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
 
             {/* Edit overlay */}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center ring-2 ring-amber-400 ring-inset">
