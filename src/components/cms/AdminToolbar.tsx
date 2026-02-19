@@ -3,8 +3,10 @@ import { useEditMode } from "@/contexts/EditModeContext";
 import { useLayoutEditor } from "@/contexts/LayoutEditorContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { LayoutPresets } from "@/components/cms/LayoutPresets";
 import {
-    Pencil, Save, X, Loader2, Layout,
+    Pencil, Save, X, Loader2, Layout, Layers,
     Undo2, Redo2, Smartphone, Tablet, Monitor,
 } from "lucide-react";
 
@@ -24,6 +26,7 @@ export function AdminToolbar() {
         undo, redo, canUndo, canRedo,
     } = useLayoutEditor();
     const { language } = useLanguage();
+    const [showPresets, setShowPresets] = useState(false);
 
     if (!isAdmin || loading) return null;
 
@@ -133,7 +136,26 @@ export function AdminToolbar() {
                             canRedo ? "hover:bg-black/20" : "opacity-30 cursor-not-allowed"
                         )}
                     ><Redo2 className="w-3.5 h-3.5" /></button>
+
+                    {/* Presets button */}
+                    <Sep />
+                    <button
+                        onClick={() => setShowPresets(p => !p)}
+                        title="Layout Presets"
+                        className={cn(
+                            "flex items-center gap-1 text-[10px] font-black px-2 py-1 rounded-full transition-all",
+                            showPresets ? "bg-black/30" : "hover:bg-black/10 opacity-70 hover:opacity-100"
+                        )}
+                    >
+                        <Layers className="w-3 h-3" />
+                        <span className="hidden sm:inline">Presets</span>
+                    </button>
                 </>
+            )}
+
+            {/* Presets panel */}
+            {isLayoutEditMode && showPresets && (
+                <LayoutPresets onClose={() => setShowPresets(false)} />
             )}
 
             {/* Save text edits */}

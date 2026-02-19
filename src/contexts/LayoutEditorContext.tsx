@@ -23,11 +23,18 @@ export interface ElementLayout {
     height?: number | null;
 }
 
+export interface VisibilityRule {
+    hideOnMobile?: boolean;
+    hideOnTablet?: boolean;
+    hideOnDesktop?: boolean;
+    hideOnLanguages?: string[];
+}
+
 interface LayoutEditorContextType {
     isLayoutEditMode: boolean;
     toggleLayoutEditMode: () => void;
-    activeBreakpoint: Breakpoint;   // what the admin is currently EDITING
-    autoBreakpoint: Breakpoint;     // actual device size (used for rendering)
+    activeBreakpoint: Breakpoint;
+    autoBreakpoint: Breakpoint;
     setBreakpoint: (bp: Breakpoint) => void;
     selectedId: string | null;
     selectElement: (id: string | null) => void;
@@ -44,6 +51,10 @@ interface LayoutEditorContextType {
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
+    // Visibility
+    getVisibility: (id: string, page: string) => VisibilityRule;
+    setVisibility: (id: string, page: string, rule: VisibilityRule) => void;
+    isHiddenForUser: (id: string, page: string) => boolean;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -52,8 +63,8 @@ const LayoutEditorContext = createContext<LayoutEditorContextType | undefined>(u
 
 const DEFAULT_LAYOUT: ElementLayout = { x: 0, y: 0 };
 const LOCK_STORAGE_KEY = "cms_locked_elements";
+const VISIBILITY_STORAGE_KEY = "cms_element_visibility";
 
-/** Auto-detect viewport breakpoint */
 const detectBreakpoint = (): Breakpoint => {
     if (typeof window === "undefined") return "desktop";
     const w = window.innerWidth;
@@ -64,9 +75,10 @@ const detectBreakpoint = (): Breakpoint => {
 
 const makeKey = (page: string, bp: Breakpoint, id: string) => `${page}|${bp}|${id}`;
 
-const loadLockedFromStorage = (): Record<string, boolean> => {
-    try { return JSON.parse(localStorage.getItem(LOCK_STORAGE_KEY) || "{}"); }
-    catch { return {}; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const fromStorage = (key: string, fallback: any) => {
+    try { return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; }
+    catch { return fallback; };
 };
 
 // ── Provider ──────────────────────────────────────────────────────────────────
@@ -85,20 +97,26 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
     const [savedLayouts, setSavedLayouts] = useState<Record<string, ElementLayout>>({});
     const [pendingLayouts, setPendingLayouts] = useState<Record<string, ElementLayout>>({});
     const [isSavingLayout, setIsSavingLayout] = useState(false);
-    const [lockedElements, setLockedElements] = useState<Record<string, boolean>>(loadLockedFromStorage);
 
-    // History stacks (refs = no re-render on push/pop)
+    const [lockedElements, setLockedElements] = useState<Record<string, boolean>>(
+        () => fromStorage(LOCK_STORAGE_KEY, {})
+    );
+    const [visibilityRules, setVisibilityRules] = useState<Record<string, VisibilityRule>>(
+        () => fromStorage(VISIBILITY_STORAGE_KEY, {})
+    );
+
+    // Undo / Redo history stacks
     const undoStack = useRef<Record<string, ElementLayout>[]>([]);
     const redoStack = useRef<Record<string, ElementLayout>[]>([]);
     const [canUndo, setCanUndo] = useState(false);
     const [canRedo, setCanRedo] = useState(false);
 
-    // ── Breakpoint tracking ───────────────────────────────────────────────────
+    // ── Breakpoint auto-detect ────────────────────────────────────────────────
 
     useEffect(() => {
-        const handler = () => setAutoBreakpoint(detectBreakpoint());
-        window.addEventListener("resize", handler);
-        return () => window.removeEventListener("resize", handler);
+        const h = () => setAutoBreakpoint(detectBreakpoint());
+        window.addEventListener("resize", h);
+        return () => window.removeEventListener("resize", h);
     }, []);
 
     // ── Load layouts from Supabase ────────────────────────────────────────────
@@ -116,20 +134,17 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                     loaded[key] = { x: row.x, y: row.y, width: row.width ?? null, height: row.height ?? null };
                 }
                 setSavedLayouts(loaded);
-                // Reset history on full reload
-                undoStack.current = [];
-                redoStack.current = [];
-                setCanUndo(false);
-                setCanRedo(false);
+                undoStack.current = []; redoStack.current = [];
+                setCanUndo(false); setCanRedo(false);
             }
         } catch (e) {
-            console.error("Failed to load layout_settings:", e);
+            console.error("layout_settings load failed:", e);
         }
     }, [language]);
 
     useEffect(() => { loadLayouts(); }, [loadLayouts]);
 
-    // ── Global keyboard shortcuts (Ctrl+Z / Ctrl+Shift+Z) ────────────────────
+    // ── Global keyboard shortcuts ─────────────────────────────────────────────
 
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
@@ -144,12 +159,11 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLayoutEditMode]);
 
-    // ── API ───────────────────────────────────────────────────────────────────
+    // ── Toggle / breakpoint ───────────────────────────────────────────────────
 
     const toggleLayoutEditMode = () => {
         if (!isAdmin) return;
         if (isLayoutEditMode) {
-            // Exiting — reset everything
             setPendingLayouts({});
             setSelectedId(null);
             setForcedBreakpoint(null);
@@ -165,70 +179,71 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         setSelectedId(null);
     };
 
-    // KEY FIX: Reading layout uses ACTUAL device breakpoint (autoBreakpoint)
-    // so mobile edits NEVER affect desktop rendering and vice versa.
+    // ── Layout get / set ──────────────────────────────────────────────────────
+
+    // READ  → actual device breakpoint (never shows mobile edits on desktop)
+    // WRITE → active editing breakpoint (can be forced by admin)
     const getLayout = (id: string, page: string): ElementLayout => {
         const readKey = makeKey(page, autoBreakpoint, id);
-        // In edit mode, also check if there's a pending edit for the current
-        // EDITING breakpoint (activeBreakpoint) so edits are visible immediately
         const editKey = makeKey(page, activeBreakpoint, id);
-        const pendingForEdit = pendingLayouts[editKey];
-        if (isLayoutEditMode && pendingForEdit) return pendingForEdit;
+        if (isLayoutEditMode && pendingLayouts[editKey]) return pendingLayouts[editKey];
         return savedLayouts[readKey] ?? DEFAULT_LAYOUT;
     };
 
     const setElementLayout = (id: string, page: string, layout: ElementLayout) => {
         if (!isAdmin || !isLayoutEditMode) return;
         const key = makeKey(page, activeBreakpoint, id);
-
         setSavedLayouts(prev => {
-            // Push current full snapshot to undo stack
             undoStack.current = [...undoStack.current.slice(-49), { ...prev }];
-            redoStack.current = []; // clear redo on new action
-            setCanUndo(true);
-            setCanRedo(false);
+            redoStack.current = [];
+            setCanUndo(true); setCanRedo(false);
             return { ...prev, [key]: layout };
         });
         setPendingLayouts(prev => ({ ...prev, [key]: layout }));
     };
 
+    // ── Undo / Redo ────────────────────────────────────────────────────────────
+
     const undo = useCallback(() => {
-        if (undoStack.current.length === 0) return;
-        const prevState = undoStack.current[undoStack.current.length - 1];
+        if (!undoStack.current.length) return;
+        const prev = undoStack.current.at(-1)!;
         undoStack.current = undoStack.current.slice(0, -1);
-        setSavedLayouts(current => {
-            redoStack.current = [...redoStack.current.slice(-49), { ...current }];
+        setSavedLayouts(cur => {
+            redoStack.current = [...redoStack.current.slice(-49), { ...cur }];
             setCanRedo(true);
-            return prevState;
+            return prev;
         });
         setPendingLayouts({});
         setCanUndo(undoStack.current.length > 0);
     }, []);
 
     const redo = useCallback(() => {
-        if (redoStack.current.length === 0) return;
-        const nextState = redoStack.current[redoStack.current.length - 1];
+        if (!redoStack.current.length) return;
+        const next = redoStack.current.at(-1)!;
         redoStack.current = redoStack.current.slice(0, -1);
-        setSavedLayouts(current => {
-            undoStack.current = [...undoStack.current.slice(-49), { ...current }];
+        setSavedLayouts(cur => {
+            undoStack.current = [...undoStack.current.slice(-49), { ...cur }];
             setCanUndo(true);
-            return nextState;
+            return next;
         });
         setPendingLayouts({});
         setCanRedo(redoStack.current.length > 0);
     }, []);
 
+    // ── Save layouts to Supabase ──────────────────────────────────────────────
+
     const saveLayouts = async (page: string) => {
         const relevant = Object.entries(pendingLayouts).filter(([k]) => k.startsWith(`${page}|`));
-        if (!isAdmin || relevant.length === 0) return;
+        if (!isAdmin || !relevant.length) return;
         setIsSavingLayout(true);
         try {
-            const upserts = relevant.map(([key, layout]) => {
+            const upserts = relevant.map(([key, l]) => {
                 const [pg, bp, ...idParts] = key.split("|");
                 return {
-                    page_slug: pg, language, breakpoint: bp, element_id: idParts.join("|"),
-                    x: layout.x, y: layout.y,
-                    width: layout.width ?? null, height: layout.height ?? null,
+                    page_slug: pg, language, breakpoint: bp,
+                    element_id: idParts.join("|"),
+                    x: l.x, y: l.y,
+                    width: l.width ?? null, height: l.height ?? null,
                     updated_at: new Date().toISOString(),
                 };
             });
@@ -237,13 +252,13 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                 .upsert(upserts, { onConflict: "page_slug,language,breakpoint,element_id" });
             if (error) throw error;
             setPendingLayouts(prev => {
-                const next = { ...prev };
-                for (const key of Object.keys(next)) if (key.startsWith(`${page}|`)) delete next[key];
-                return next;
+                const n = { ...prev };
+                Object.keys(n).forEach(k => { if (k.startsWith(`${page}|`)) delete n[k]; });
+                return n;
             });
-            toast({ title: "✅ Layout saved", description: `${upserts.length} positions saved for ${activeBreakpoint}.` });
+            toast({ title: "✅ Layout saved", description: `${upserts.length} element(s) saved for ${activeBreakpoint}.` });
         } catch (err: any) {
-            toast({ title: "Error saving layout", description: err.message, variant: "destructive" });
+            toast({ title: "Save failed", description: err.message, variant: "destructive" });
         } finally {
             setIsSavingLayout(false);
         }
@@ -251,19 +266,44 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
 
     // ── Locking ───────────────────────────────────────────────────────────────
 
-    const isLocked = useCallback((id: string, page: string) => {
-        return !!lockedElements[`${page}|${id}`];
-    }, [lockedElements]);
+    const isLocked = useCallback((id: string, page: string) =>
+        !!lockedElements[`${page}|${id}`], [lockedElements]);
 
     const toggleLock = useCallback((id: string, page: string) => {
         if (!isAdmin) return;
-        const storageKey = `${page}|${id}`;
         setLockedElements(prev => {
-            const next = { ...prev, [storageKey]: !prev[storageKey] };
+            const k = `${page}|${id}`;
+            const next = { ...prev, [k]: !prev[k] };
             localStorage.setItem(LOCK_STORAGE_KEY, JSON.stringify(next));
             return next;
         });
     }, [isAdmin]);
+
+    // ── Visibility ────────────────────────────────────────────────────────────
+
+    const getVisibility = useCallback((id: string, page: string): VisibilityRule =>
+        visibilityRules[`${page}|${id}`] ?? {}, [visibilityRules]);
+
+    const setVisibility = useCallback((id: string, page: string, rule: VisibilityRule) => {
+        if (!isAdmin) return;
+        setVisibilityRules(prev => {
+            const next = { ...prev, [`${page}|${id}`]: rule };
+            localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(next));
+            return next;
+        });
+    }, [isAdmin]);
+
+    const isHiddenForUser = useCallback((id: string, page: string): boolean => {
+        const rule = visibilityRules[`${page}|${id}`];
+        if (!rule) return false;
+        if (rule.hideOnMobile && autoBreakpoint === "mobile") return true;
+        if (rule.hideOnTablet && autoBreakpoint === "tablet") return true;
+        if (rule.hideOnDesktop && autoBreakpoint === "desktop") return true;
+        if (rule.hideOnLanguages?.includes(language)) return true;
+        return false;
+    }, [visibilityRules, autoBreakpoint, language]);
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     const hasPendingLayoutEdits = Object.keys(pendingLayouts).length > 0;
 
@@ -276,6 +316,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
             saveLayouts, isSavingLayout, hasPendingLayoutEdits,
             isLocked, toggleLock,
             undo, redo, canUndo, canRedo,
+            getVisibility, setVisibility, isHiddenForUser,
         }}>
             {children}
         </LayoutEditorContext.Provider>

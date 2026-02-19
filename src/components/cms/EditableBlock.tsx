@@ -2,6 +2,7 @@ import { useRef, useCallback, useEffect, KeyboardEvent, ReactNode } from "react"
 import { GripVertical, Lock, Unlock, AlignLeft, AlignCenter, AlignRight, RotateCcw } from "lucide-react";
 import { useEditableLayout } from "@/hooks/useEditableLayout";
 import { useLayoutEditor } from "@/contexts/LayoutEditorContext";
+import { VisibilityToggles } from "@/components/cms/LayoutPresets";
 import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -55,8 +56,9 @@ const ALL_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
 export function EditableBlock({ id, page, children, className }: EditableBlockProps) {
     const { layout, isSelected, select, deselect, update, isLayoutEditMode } =
         useEditableLayout(id, page);
-    const { isLocked, toggleLock } = useLayoutEditor();
+    const { isLocked, toggleLock, isHiddenForUser } = useLayoutEditor();
     const locked = isLocked(id, page);
+    const hiddenForUser = isHiddenForUser(id, page);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     const isDragging = useRef(false);
@@ -176,7 +178,11 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
 
     // ── Normal mode — zero overhead ──────────────────────────────────────────
 
-    if (!isLayoutEditMode) return <div className={className}>{children}</div>;
+    if (!isLayoutEditMode) {
+        // Completely invisible to normal visitors when hidden
+        if (hiddenForUser) return null;
+        return <div className={className}>{children}</div>;
+    }
 
     // ── Derived render values ─────────────────────────────────────────────────
 
@@ -194,6 +200,9 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 willChange: "transform",
                 width: layout.width ? `${layout.width}px` : undefined,
                 height: layout.height ? `${layout.height}px` : undefined,
+                // Red tint when hidden for current visitor context (visible only in edit mode)
+                opacity: hiddenForUser ? 0.45 : undefined,
+                outline: hiddenForUser ? "2px dashed #f43f5e" : undefined,
             }}
             tabIndex={0}
             onKeyDown={handleKeyDown}
@@ -314,6 +323,11 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                     >
                         {locked ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
                     </button>
+
+                    <div className="w-px h-3 bg-zinc-600 mx-0.5" />
+
+                    {/* Visibility toggles (📱 💻 🖥 EN KU AR) */}
+                    <VisibilityToggles id={id} page={page} />
                 </div>
             )}
 

@@ -20,6 +20,10 @@ create table if not exists public.layout_settings (
 
 alter table public.layout_settings enable row level security;
 
+-- Drop existing policies first so this file is safe to re-run
+drop policy if exists "Public read layout_settings" on public.layout_settings;
+drop policy if exists "Admin write layout_settings" on public.layout_settings;
+
 -- Public can read (needed to apply positions on page load)
 create policy "Public read layout_settings"
   on public.layout_settings
