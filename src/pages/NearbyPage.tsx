@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLocation } from "@/hooks/use-location";
 import { cn } from "@/lib/utils";
 import { EditableText } from "@/components/cms/EditableText";
+import { SortablePage } from "@/components/cms/SortablePage";
+import { SortableSection } from "@/components/cms/SortableSection";
+import { useEditMode } from "@/contexts/EditModeContext";
 
 export interface Restaurant {
   id: string;
@@ -43,8 +46,11 @@ const STATIC_CATEGORIES: Category[] = [
   { id: 'candy-shop', name: 'Candy Shop', slug: 'candy-shop', icon: Store },
 ];
 
+const DEFAULT_ORDER = ["header", "filters", "results"];
+
 const NearbyPage = () => {
   const { t, translateCategoryName } = useLanguage();
+  const { sectionOrders } = useEditMode();
   const { userLocation, isLoadingLocation, locationError, requestLocation, calculateDistance } = useLocation();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [selectedCategorySlug, setSelectedCategorySlug] = useState<string | null>(null);
@@ -137,101 +143,94 @@ const NearbyPage = () => {
       .filter((r) => selectedCategoryName ? r.categories?.name === selectedCategoryName : true)
     : restaurants.filter((r) => selectedCategoryName ? r.categories?.name === selectedCategoryName : true);
 
-  return (
-    <Layout>
-      <section className="pt-32 pb-24 bg-background min-h-screen">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-            <div className="space-y-4">
-              <div className="place-badge">
-                <EditableText contentKey="nearby.badge.premium" fallback={t('nearby.badge.premium')} />
-              </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.2] pt-2 pb-2">
-                <EditableText contentKey="nearby.title" fallback={t('nearby.title')} as="span" />
-              </h1>
-              <p className="text-lg text-muted-foreground font-medium max-w-xl">
-                {userLocation
-                  ? <EditableText contentKey="nearby.subtitle.location" fallback={t('nearby.subtitle.location')} as="span" />
-                  : <EditableText contentKey="nearby.subtitle.no_location" fallback={t('nearby.subtitle.no_location')} as="span" />}
-              </p>
+  const order = sectionOrders["nearby"] ?? DEFAULT_ORDER;
+
+  const sections: Record<string, JSX.Element> = {
+    header: (
+      <SortableSection key="header" id="header">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="space-y-4">
+            <div className="place-badge">
+              <EditableText contentKey="nearby.badge.premium" fallback={t('nearby.badge.premium')} />
             </div>
-
-            <Button
-              onClick={() => requestLocation()}
-              disabled={isLoadingLocation}
-              size="lg"
-              className={cn(
-                "rounded-full font-bold uppercase tracking-wider text-xs transition-all shadow-xl h-14 px-8",
-                userLocation
-                  ? "bg-secondary text-foreground border border-white/5"
-                  : "hero-gradient text-background border-none hover:scale-105"
-              )}
-            >
-              {isLoadingLocation ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t('nearby.finding')}
-                </>
-              ) : userLocation ? (
-                <>
-                  <MapPin className="w-4 h-4 mr-2 text-primary" />
-                  {t('nearby.detected')}
-                </>
-              ) : (
-                <>
-                  <Navigation className="w-4 h-4 mr-2" />
-                  {t('nearby.enable')}
-                </>
-              )}
-            </Button>
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.2] pt-2 pb-2">
+              <EditableText contentKey="nearby.title" fallback={t('nearby.title')} as="span" />
+            </h1>
+            <p className="text-lg text-muted-foreground font-medium max-w-xl">
+              {userLocation
+                ? <EditableText contentKey="nearby.subtitle.location" fallback={t('nearby.subtitle.location')} as="span" />
+                : <EditableText contentKey="nearby.subtitle.no_location" fallback={t('nearby.subtitle.no_location')} as="span" />}
+            </p>
           </div>
-
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <Button
+            onClick={() => requestLocation()}
+            disabled={isLoadingLocation}
+            size="lg"
+            className={cn(
+              "rounded-full font-bold uppercase tracking-wider text-xs transition-all shadow-xl h-14 px-8",
+              userLocation
+                ? "bg-secondary text-foreground border border-white/5"
+                : "hero-gradient text-background border-none hover:scale-105"
+            )}
+          >
+            {isLoadingLocation ? (
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t('nearby.finding')}</>
+            ) : userLocation ? (
+              <><MapPin className="w-4 h-4 mr-2 text-primary" />{t('nearby.detected')}</>
+            ) : (
+              <><Navigation className="w-4 h-4 mr-2" />{t('nearby.enable')}</>
+            )}
+          </Button>
+        </div>
+      </SortableSection>
+    ),
+    filters: (
+      <SortableSection key="filters" id="filters">
+        <div className="flex items-center gap-3 overflow-x-auto pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <Button
+            variant="ghost"
+            onClick={() => setSelectedCategorySlug(null)}
+            className={cn(
+              "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
+              selectedCategorySlug === null
+                ? "bg-primary text-white border-primary"
+                : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
+            )}
+          >
+            All
+          </Button>
+          {categories.map((category) => (
             <Button
+              key={category.id}
               variant="ghost"
-              onClick={() => setSelectedCategorySlug(null)}
+              onClick={() => setSelectedCategorySlug(category.slug === selectedCategorySlug ? null : category.slug)}
               className={cn(
                 "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
-                selectedCategorySlug === null
-                  ? "bg-primary text-white border-primary"
+                selectedCategorySlug === category.slug
+                  ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
                   : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
               )}
             >
-              All
+              {category.icon && <category.icon className="w-4 h-4 mr-2" />}
+              {translateCategoryName(category.name)}
             </Button>
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant="ghost"
-                onClick={() => setSelectedCategorySlug(category.slug === selectedCategorySlug ? null : category.slug)}
-                className={cn(
-                  "flex-shrink-0 rounded-full h-10 px-6 font-bold text-xs uppercase tracking-wider whitespace-nowrap border transition-all",
-                  selectedCategorySlug === category.slug
-                    ? "bg-primary text-white border-primary shadow-lg shadow-primary/25"
-                    : "bg-secondary/50 text-muted-foreground border-white/5 hover:bg-secondary hover:text-foreground"
-                )}
-              >
-                {category.icon && <category.icon className="w-4 h-4 mr-2" />}
-                {translateCategoryName(category.name)}
-              </Button>
-            ))}
-          </div>
-
+          ))}
+        </div>
+      </SortableSection>
+    ),
+    results: (
+      <SortableSection key="results" id="results">
+        <div>
           {locationError && (
             <div className="mb-8 p-4 glass-card border-rose-500/20 bg-rose-500/5 rounded-2xl text-rose-500 font-bold flex items-center gap-3">
               <Navigation className="w-5 h-5" />
               {locationError}
             </div>
           )}
-
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-[4/3] rounded-[2.5rem] bg-secondary/50 animate-pulse border border-border/50"
-                />
+                <div key={i} className="aspect-[4/3] rounded-[2.5rem] bg-secondary/50 animate-pulse border border-border/50" />
               ))}
             </div>
           ) : sortedRestaurants.length > 0 ? (
@@ -259,16 +258,24 @@ const NearbyPage = () => {
               </div>
               <p className="text-2xl font-black text-muted-foreground tracking-tight">{t('index.no_results')}</p>
               {selectedCategorySlug && (
-                <Button
-                  variant="link"
-                  onClick={() => setSelectedCategorySlug(null)}
-                  className="mt-4 text-primary"
-                >
+                <Button variant="link" onClick={() => setSelectedCategorySlug(null)} className="mt-4 text-primary">
                   Clear Filters
                 </Button>
               )}
             </div>
           )}
+        </div>
+      </SortableSection>
+    ),
+  };
+
+  return (
+    <Layout>
+      <section className="pt-32 pb-24 bg-background min-h-screen">
+        <div className="container mx-auto px-4">
+          <SortablePage page="nearby" defaultOrder={DEFAULT_ORDER}>
+            {order.map((id) => sections[id]).filter(Boolean)}
+          </SortablePage>
         </div>
       </section>
     </Layout>

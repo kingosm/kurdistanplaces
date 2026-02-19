@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 type Language = "en" | "ku" | "ar";
 
 interface EditModeContextType {
+    // Text editing
     isEditMode: boolean;
     toggleEditMode: () => void;
     pendingEdits: Record<string, string>;
@@ -16,6 +17,10 @@ interface EditModeContextType {
     getContent: (key: string, language: Language, fallback: string) => string;
     isSaving: boolean;
     hasPendingEdits: boolean;
+    // Section ordering
+    sectionOrders: Record<string, string[]>;         // page → ordered section keys
+    pendingLayouts: Record<string, string[]>;         // page → pending new order
+    setSectionOrder: (page: string, order: string[]) => void;
 }
 
 const EditModeContext = createContext<EditModeContextType | undefined>(undefined);
@@ -32,19 +37,18 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
     const [dbOverrides, setDbOverrides] = useState<Record<string, string>>({});
     const [isSaving, setIsSaving] = useState(false);
 
-    // Load all DB overrides on mount
+    // Layout state
+    const [sectionOrders, setSectionOrders] = useState<Record<string, string[]>>({});
+    const [pendingLayouts, setPendingLayouts] = useState<Record<string, string[]>>({});
+
+    // ── Load all DB content + layout on mount ──────────────────────────────
     const loadContent = useCallback(async () => {
         try {
             const { data, error } = await (supabase as any)
                 .from("site_content")
                 .select("key, language, value");
 
-            if (error) {
-                console.error("Error loading site content:", error);
-                return;
-            }
-
-            if (data) {
+            if (!error && data) {
                 const overrides: Record<string, string> = {};
                 for (const row of data) {
                     overrides[makeCompositeKey(row.key, row.language)] = row.value;
@@ -56,57 +60,104 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
+    const loadLayout = useCallback(async () => {
+        try {
+            const { data, error } = await (supabase as any)
+                .from("site_layout")
+                .select("page, section_key, sort_order")
+                .order("sort_order", { ascending: true });
+
+            if (!error && data) {
+                const orders: Record<string, string[]> = {};
+                for (const row of data) {
+                    if (!orders[row.page]) orders[row.page] = [];
+                    orders[row.page].push(row.section_key);
+                }
+                setSectionOrders(orders);
+            }
+        } catch (e) {
+            console.error("Failed to load site layout:", e);
+        }
+    }, []);
+
     useEffect(() => {
         loadContent();
-    }, [loadContent]);
+        loadLayout();
+    }, [loadContent, loadLayout]);
 
-    // Only allow edit mode for admins
+    // ── Edit mode toggle ───────────────────────────────────────────────────
     const toggleEditMode = () => {
         if (!isAdmin) return;
         setIsEditMode((prev) => {
             if (prev) {
-                // Turning off — discard pending
                 setPendingEdits({});
+                setPendingLayouts({});
             }
             return !prev;
         });
     };
 
-    // Stage a change
+    // ── Stage a text change ────────────────────────────────────────────────
     const setEdit = (key: string, language: Language, value: string) => {
         if (!isAdmin || !isEditMode) return;
-        const compositeKey = makeCompositeKey(key, language);
-        setPendingEdits((prev) => ({ ...prev, [compositeKey]: value }));
+        setPendingEdits((prev) => ({ ...prev, [makeCompositeKey(key, language)]: value }));
     };
 
-    // Save all pending edits to Supabase
+    // ── Stage a layout change ──────────────────────────────────────────────
+    const setSectionOrder = (page: string, order: string[]) => {
+        if (!isAdmin || !isEditMode) return;
+        setPendingLayouts((prev) => ({ ...prev, [page]: order }));
+        // Optimistically update visible order
+        setSectionOrders((prev) => ({ ...prev, [page]: order }));
+    };
+
+    // ── Save everything to Supabase ────────────────────────────────────────
     const saveAll = async () => {
-        if (!isAdmin || Object.keys(pendingEdits).length === 0) return;
+        const hasTextEdits = Object.keys(pendingEdits).length > 0;
+        const hasLayoutEdits = Object.keys(pendingLayouts).length > 0;
+        if (!isAdmin || (!hasTextEdits && !hasLayoutEdits)) return;
+
         setIsSaving(true);
-
         try {
-            const upserts = Object.entries(pendingEdits).map(([compositeKey, value]) => {
-                const [key, language] = compositeKey.split("|");
-                return { key, language, value, updated_at: new Date().toISOString() };
-            });
+            // Save text content
+            if (hasTextEdits) {
+                const upserts = Object.entries(pendingEdits).map(([compositeKey, value]) => {
+                    const [key, language] = compositeKey.split("|");
+                    return { key, language, value, updated_at: new Date().toISOString() };
+                });
+                const { error } = await (supabase as any)
+                    .from("site_content")
+                    .upsert(upserts, { onConflict: "key,language" });
+                if (error) throw error;
+                setDbOverrides((prev) => ({ ...prev, ...pendingEdits }));
+                setPendingEdits({});
+            }
 
-            const { error } = await (supabase as any)
-                .from("site_content")
-                .upsert(upserts, { onConflict: "key,language" });
+            // Save layout order
+            if (hasLayoutEdits) {
+                const layoutRows = Object.entries(pendingLayouts).flatMap(([page, order]) =>
+                    order.map((section_key, index) => ({
+                        page,
+                        section_key,
+                        sort_order: index,
+                        updated_at: new Date().toISOString(),
+                    }))
+                );
+                const { error } = await (supabase as any)
+                    .from("site_layout")
+                    .upsert(layoutRows, { onConflict: "page,section_key" });
+                if (error) throw error;
+                setPendingLayouts({});
+            }
 
-            if (error) throw error;
-
-            // Merge pending into dbOverrides
-            setDbOverrides((prev) => ({ ...prev, ...pendingEdits }));
-            setPendingEdits({});
-
+            const total = Object.keys(pendingEdits).length + Object.keys(pendingLayouts).length;
             toast({
-                title: "✅ Content saved",
-                description: `${upserts.length} change${upserts.length !== 1 ? "s" : ""} saved successfully.`,
+                title: "✅ Changes saved",
+                description: `Content and layout updated successfully.`,
             });
         } catch (error: any) {
             toast({
-                title: "Error saving content",
+                title: "Error saving",
                 description: error.message,
                 variant: "destructive",
             });
@@ -115,13 +166,27 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    // Discard all pending edits
+    // ── Cancel all pending changes ─────────────────────────────────────────
     const cancelAll = () => {
         setPendingEdits({});
+        // Revert optimistic layout updates
+        setPendingLayouts((pending) => {
+            // Reload from DB state by removing optimistic overrides
+            setSectionOrders((current) => {
+                const reverted = { ...current };
+                for (const page of Object.keys(pending)) {
+                    delete reverted[page];
+                }
+                return reverted;
+            });
+            return {};
+        });
         setIsEditMode(false);
+        // Re-load layout from DB
+        loadLayout();
     };
 
-    // Get content: pending → DB override → fallback (hardcoded translation)
+    // ── Get content (pending → DB → fallback) ─────────────────────────────
     const getContent = (key: string, language: Language, fallback: string): string => {
         const compositeKey = makeCompositeKey(key, language);
         if (pendingEdits[compositeKey] !== undefined) return pendingEdits[compositeKey];
@@ -129,7 +194,8 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
         return fallback;
     };
 
-    const hasPendingEdits = Object.keys(pendingEdits).length > 0;
+    const hasPendingEdits =
+        Object.keys(pendingEdits).length > 0 || Object.keys(pendingLayouts).length > 0;
 
     return (
         <EditModeContext.Provider
@@ -144,6 +210,9 @@ export const EditModeProvider = ({ children }: { children: ReactNode }) => {
                 getContent,
                 isSaving,
                 hasPendingEdits,
+                sectionOrders,
+                pendingLayouts,
+                setSectionOrder,
             }}
         >
             {children}
