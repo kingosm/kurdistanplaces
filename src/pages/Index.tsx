@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableImage } from "@/components/cms/EditableImage";
+import { EditableBlock } from "@/components/cms/EditableBlock";
 import { SortablePage } from "@/components/cms/SortablePage";
 import { SortableSection } from "@/components/cms/SortableSection";
 import { useEditMode } from "@/contexts/EditModeContext";
@@ -68,28 +69,36 @@ const Index = () => {
           <div className="container mx-auto px-6 relative z-10">
             <div className="max-w-5xl mx-auto text-center">
               <div className="mb-12">
-                <span className="place-badge mx-auto block mb-6">
-                  <EditableText contentKey="hero.badge" fallback={t('hero.badge')} />
-                </span>
-                <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[1.1] pt-4 pb-4">
-                  <EditableText contentKey="hero.title" fallback={t('hero.title')} as="span" />
-                </h1>
-                <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed pt-2">
-                  <EditableText contentKey="hero.desc.premium" fallback={t('hero.desc.premium')} as="span" />
-                </p>
+                <EditableBlock id="hero_badge" page="index">
+                  <span className="place-badge mx-auto block mb-6">
+                    <EditableText contentKey="hero.badge" fallback={t('hero.badge')} />
+                  </span>
+                </EditableBlock>
+                <EditableBlock id="hero_title" page="index">
+                  <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[1.1] pt-4 pb-4">
+                    <EditableText contentKey="hero.title" fallback={t('hero.title')} as="span" />
+                  </h1>
+                </EditableBlock>
+                <EditableBlock id="hero_desc" page="index">
+                  <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed pt-2">
+                    <EditableText contentKey="hero.desc.premium" fallback={t('hero.desc.premium')} as="span" />
+                  </p>
+                </EditableBlock>
               </div>
 
-              <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-                <div className="flex flex-col gap-1 items-center">
-                  <span className="text-foreground text-3xl font-black">{formatCount(stats.places)}+</span>
-                  <span><EditableText contentKey="hero.collections" fallback={t('hero.collections')} /></span>
+              <EditableBlock id="hero_stats" page="index">
+                <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="flex flex-col gap-1 items-center">
+                    <span className="text-foreground text-3xl font-black">{formatCount(stats.places)}+</span>
+                    <span><EditableText contentKey="hero.collections" fallback={t('hero.collections')} /></span>
+                  </div>
+                  <div className="w-px h-12 bg-white/10" />
+                  <div className="flex flex-col gap-1 items-center">
+                    <span className="text-foreground text-3xl font-black">{formatCount(stats.community)}+</span>
+                    <span><EditableText contentKey="hero.stats.diners" fallback={t('hero.stats.diners')} /></span>
+                  </div>
                 </div>
-                <div className="w-px h-12 bg-white/10" />
-                <div className="flex flex-col gap-1 items-center">
-                  <span className="text-foreground text-3xl font-black">{formatCount(stats.community)}+</span>
-                  <span><EditableText contentKey="hero.stats.diners" fallback={t('hero.stats.diners')} /></span>
-                </div>
-              </div>
+              </EditableBlock>
             </div>
           </div>
         </section>
