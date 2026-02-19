@@ -126,7 +126,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         try {
             const { data, error } = await (supabase as any)
                 .from("layout_settings")
-                .select("page_slug, breakpoint, element_id, x, y, width, height")
+                .select("page_slug, breakpoint, element_id, x, y, width, height, font_size")
                 .eq("language", language);
             if (!error && data) {
                 const loaded: Record<string, ElementLayout> = {};
@@ -239,7 +239,10 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
     // ── Save layouts to Supabase ──────────────────────────────────────────────
 
     const saveLayouts = async (page: string) => {
-        const relevant = Object.entries(pendingLayouts).filter(([k]) => k.startsWith(`${page}|`));
+        // Save both the current page's layouts AND any global layouts (navbar/footer)
+        const relevant = Object.entries(pendingLayouts).filter(([k]) =>
+            k.startsWith(`${page}|`) || k.startsWith("__global__|")
+        );
         if (!isAdmin || !relevant.length) return;
         setIsSavingLayout(true);
         try {
