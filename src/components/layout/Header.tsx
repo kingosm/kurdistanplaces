@@ -17,6 +17,7 @@ import { useUser } from "@/contexts/UserContext";
 import { cn } from "@/lib/utils";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
+import { SortableNavLinks } from "@/components/cms/SortableNavLinks";
 
 export function Header() {
   const { t, isRTL } = useLanguage();
@@ -78,34 +79,9 @@ export function Header() {
                 </h1>
               </Link>
 
-              {/* Desktop Navigation — each tab is individually draggable */}
+              {/* Desktop Navigation — drag to reorder in Layout Edit mode */}
               <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-                <EditableBlock id="nav_home" page="__global__">
-                  <Link
-                    to="/"
-                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
-                  >
-                    <EditableText contentKey="nav.home" fallback={t('nav.home')} />
-                  </Link>
-                </EditableBlock>
-
-                <EditableBlock id="nav_categories" page="__global__">
-                  <Link
-                    to="/categories"
-                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
-                  >
-                    <EditableText contentKey="nav.categories" fallback={t('nav.categories')} />
-                  </Link>
-                </EditableBlock>
-
-                <EditableBlock id="nav_nearby" page="__global__">
-                  <Link
-                    to="/nearby"
-                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
-                  >
-                    <EditableText contentKey="nav.nearby" fallback={t('nav.nearby')} />
-                  </Link>
-                </EditableBlock>
+                <SortableNavLinks />
               </nav>
             </div>
           </EditableBlock>
