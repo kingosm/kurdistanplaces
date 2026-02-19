@@ -227,15 +227,15 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                         : "group-hover:ring-2 group-hover:ring-amber-400/50 group-hover:ring-dashed"
             )} />
 
-            {/* ── Drag handle ────────────────────────────────────────────────── */}
+            {/* ── Drag handle — inside bottom-right so it's never clipped ────────── */}
             {!locked && (
                 <div
                     className={cn(
-                        "absolute -top-5 left-1/2 -translate-x-1/2 z-50",
-                        "w-9 h-9 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-xl",
+                        "absolute bottom-1 right-1 z-50",
+                        "w-7 h-7 rounded-full bg-amber-500 hover:bg-amber-400 text-black shadow-xl",
                         "flex items-center justify-center",
                         "cursor-grab active:cursor-grabbing touch-none select-none",
-                        "transition-all duration-150 scale-90 opacity-0",
+                        "transition-all duration-150 scale-75 opacity-0",
                         "group-hover:opacity-100 group-hover:scale-100",
                         isSelected && "opacity-100 scale-100",
                     )}
@@ -244,7 +244,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                     onPointerUp={handlePointerUp}
                     title="Drag to move"
                 >
-                    <GripVertical className="w-4 h-4" />
+                    <GripVertical className="w-3.5 h-3.5" />
                 </div>
             )}
 
@@ -265,9 +265,9 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 />
             ))}
 
-            {/* ── Position badge ─────────────────────────────────────────────── */}
+            {/* ── Position badge (inside top-left) ────────────────────────────── */}
             {isSelected && hasMoved && (
-                <div className="absolute -top-6 right-8 z-50 bg-zinc-900/90 text-amber-400 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-amber-400/40 pointer-events-none whitespace-nowrap backdrop-blur-sm">
+                <div className="absolute top-1 left-1 z-50 bg-zinc-900/90 text-amber-400 text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border border-amber-400/40 pointer-events-none whitespace-nowrap backdrop-blur-sm">
                     X:{Math.round(tx)} Y:{Math.round(ty)}
                 </div>
             )}
@@ -289,9 +289,9 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                 </div>
             )}
 
-            {/* ── Selected element toolbar ────────────────────────────────────── */}
+            {/* ── Selected element toolbar — appears BELOW to avoid header clipping ─ */}
             {isSelected && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-0.5 bg-zinc-900/95 border border-zinc-700 rounded-full px-2 py-1 shadow-xl backdrop-blur-sm">
+                <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-0.5 bg-zinc-900/95 border border-zinc-700 rounded-full px-2 py-1 shadow-xl backdrop-blur-sm">
                     {/* Align left */}
                     <button onClick={() => alignElement("left")} title="Align left" className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-white transition-colors">
                         <AlignLeft className="w-3 h-3" />
