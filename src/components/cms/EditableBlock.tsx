@@ -213,6 +213,19 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                         : "group-hover:ring-2 group-hover:ring-amber-400/50 group-hover:ring-dashed"
             )} />
 
+            {/* ── Hover Drag Handle -- Visible when not selected (like tabs) ── */}
+            {!isSelected && !locked && (
+                <button
+                    className="absolute top-0 left-0 p-1.5 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing z-50 text-white bg-amber-500 rounded-br shadow-sm"
+                    onPointerDown={handleDragStart}
+                    onPointerMove={handlePointerMove}
+                    onPointerUp={handlePointerUp}
+                    title="Drag to move"
+                >
+                    <GripVertical className="w-3.5 h-3.5" />
+                </button>
+            )}
+
             {/* ── 8 Resize handles ─────────────────────────────────────────── */}
             {isSelected && !locked && ALL_HANDLES.map(handle => (
                 <div
