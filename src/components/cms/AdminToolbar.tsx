@@ -16,18 +16,20 @@ const LANG_LABELS: Record<string, string> = {
  * save and cancel buttons.
  */
 export function AdminToolbar() {
-    const { isAdmin } = useUser();
+    const { isAdmin, loading } = useUser();
     const { isEditMode, toggleEditMode, saveAll, cancelAll, hasPendingEdits, isSaving } = useEditMode();
     const { language } = useLanguage();
 
-    // Never render for non-admins
-    if (!isAdmin) return null;
+    // Never render for non-admins or while auth is loading
+    if (!isAdmin || loading) return null;
 
     return (
         <div
             className={cn(
+                // Hidden on mobile — CMS editing is desktop-only
+                "hidden md:flex",
                 "fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]",
-                "flex items-center gap-2 px-4 py-2.5 rounded-full shadow-2xl",
+                "items-center gap-2 px-4 py-2.5 rounded-full shadow-2xl",
                 "border transition-all duration-300",
                 isEditMode
                     ? "bg-amber-500 border-amber-400 text-black"
