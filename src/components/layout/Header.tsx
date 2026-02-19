@@ -16,6 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useUser } from "@/contexts/UserContext";
 import { cn } from "@/lib/utils";
 import { EditableText } from "@/components/cms/EditableText";
+import { EditableBlock } from "@/components/cms/EditableBlock";
 
 export function Header() {
   const { t, isRTL } = useLanguage();
@@ -57,40 +58,44 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-8" dir="ltr">
         <div className="flex items-center justify-between gap-4">
           {/* Logo Icon - Far Left */}
-          <div className="flex items-center">
-            <Link
-              to="/"
-              className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 hover:scale-105 shrink-0"
-            >
-              <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
-            </Link>
-          </div>
+          <EditableBlock id="header_logo" page="__global__">
+            <div className="flex items-center">
+              <Link
+                to="/"
+                className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 hover:scale-105 shrink-0"
+              >
+                <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
+              </Link>
+            </div>
+          </EditableBlock>
 
           {/* Centered Word & Desktop Nav */}
-          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
-            <Link to="/" className="group shrink-0">
-              <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
-                <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
-              </h1>
-            </Link>
+          <EditableBlock id="header_nav" page="__global__">
+            <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
+              <Link to="/" className="group shrink-0">
+                <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
+                  <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
+                </h1>
+              </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-              {[
-                { to: '/', key: 'nav.home' },
-                { to: '/categories', key: 'nav.categories' },
-                { to: '/nearby', key: 'nav.nearby' },
-              ].map((link, i) => (
-                <Link
-                  key={i}
-                  to={link.to}
-                  className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
-                >
-                  <EditableText contentKey={link.key} fallback={t(link.key)} />
-                </Link>
-              ))}
-            </nav>
-          </div>
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
+                {[
+                  { to: '/', key: 'nav.home' },
+                  { to: '/categories', key: 'nav.categories' },
+                  { to: '/nearby', key: 'nav.nearby' },
+                ].map((link, i) => (
+                  <Link
+                    key={i}
+                    to={link.to}
+                    className="text-[10px] md:text-xs font-sans font-black uppercase tracking-[0.15em] md:tracking-[0.2em] text-muted-foreground hover:text-primary transition-all whitespace-nowrap leading-normal"
+                  >
+                    <EditableText contentKey={link.key} fallback={t(link.key)} />
+                  </Link>
+                ))}
+              </nav>
+            </div>
+          </EditableBlock>
 
           {/* User Actions - Far Right */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0">

@@ -26,7 +26,8 @@ export interface ElementLayout {
 interface LayoutEditorContextType {
     isLayoutEditMode: boolean;
     toggleLayoutEditMode: () => void;
-    activeBreakpoint: Breakpoint;
+    activeBreakpoint: Breakpoint;   // what the admin is currently EDITING
+    autoBreakpoint: Breakpoint;     // actual device size (used for rendering)
     setBreakpoint: (bp: Breakpoint) => void;
     selectedId: string | null;
     selectElement: (id: string | null) => void;
@@ -147,14 +148,15 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
 
     const toggleLayoutEditMode = () => {
         if (!isAdmin) return;
-        setIsLayoutEditMode(prev => {
-            if (prev) {
-                setPendingLayouts({});
-                setSelectedId(null);
-                setForcedBreakpoint(null);
-            }
-            return !prev;
-        });
+        if (isLayoutEditMode) {
+            // Exiting — reset everything
+            setPendingLayouts({});
+            setSelectedId(null);
+            setForcedBreakpoint(null);
+            setIsLayoutEditMode(false);
+        } else {
+            setIsLayoutEditMode(true);
+        }
     };
 
     const setBreakpoint = (bp: Breakpoint) => {
@@ -163,9 +165,16 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         setSelectedId(null);
     };
 
+    // KEY FIX: Reading layout uses ACTUAL device breakpoint (autoBreakpoint)
+    // so mobile edits NEVER affect desktop rendering and vice versa.
     const getLayout = (id: string, page: string): ElementLayout => {
-        const key = makeKey(page, activeBreakpoint, id);
-        return pendingLayouts[key] ?? savedLayouts[key] ?? DEFAULT_LAYOUT;
+        const readKey = makeKey(page, autoBreakpoint, id);
+        // In edit mode, also check if there's a pending edit for the current
+        // EDITING breakpoint (activeBreakpoint) so edits are visible immediately
+        const editKey = makeKey(page, activeBreakpoint, id);
+        const pendingForEdit = pendingLayouts[editKey];
+        if (isLayoutEditMode && pendingForEdit) return pendingForEdit;
+        return savedLayouts[readKey] ?? DEFAULT_LAYOUT;
     };
 
     const setElementLayout = (id: string, page: string, layout: ElementLayout) => {
@@ -261,7 +270,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
     return (
         <LayoutEditorContext.Provider value={{
             isLayoutEditMode, toggleLayoutEditMode,
-            activeBreakpoint, setBreakpoint,
+            activeBreakpoint, autoBreakpoint, setBreakpoint,
             selectedId, selectElement: setSelectedId,
             getLayout, setElementLayout,
             saveLayouts, isSavingLayout, hasPendingLayoutEdits,
