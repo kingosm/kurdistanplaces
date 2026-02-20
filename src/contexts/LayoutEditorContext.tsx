@@ -60,6 +60,7 @@ interface LayoutEditorContextType {
     getVisibility: (id: string, page: string) => VisibilityRule;
     setVisibility: (id: string, page: string, rule: VisibilityRule) => void;
     isHiddenForUser: (id: string, page: string) => boolean;
+    takeSnapshot: () => void;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -210,15 +211,20 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         return savedLayouts[readKey] ?? DEFAULT_LAYOUT;
     };
 
-    const setElementLayout = (id: string, page: string, layout: ElementLayout) => {
-        if (!isAdmin || !isLayoutEditMode) return;
-        const key = makeKey(page, activeBreakpoint, id);
+    const takeSnapshot = useCallback(() => {
         setSavedLayouts(prev => {
             undoStack.current = [...undoStack.current.slice(-49), { ...prev }];
             redoStack.current = [];
-            setCanUndo(true); setCanRedo(false);
-            return { ...prev, [key]: layout };
+            setCanUndo(true);
+            setCanRedo(false);
+            return prev;
         });
+    }, []);
+
+    const setElementLayout = (id: string, page: string, layout: ElementLayout) => {
+        if (!isAdmin || !isLayoutEditMode) return;
+        const key = makeKey(page, activeBreakpoint, id);
+        setSavedLayouts(prev => ({ ...prev, [key]: layout }));
         setPendingLayouts(prev => ({ ...prev, [key]: layout }));
     };
 
@@ -231,8 +237,11 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         setSavedLayouts(cur => {
             redoStack.current = [...redoStack.current.slice(-49), { ...cur }];
             setCanRedo(true);
+            localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(prev));
             return prev;
         });
+        // Clear pending edits since we've reverted to a previous "saved" or "staged" point
+        // In a more complex system we might want to keep them, but for now simple revert is safer
         setPendingLayouts({});
         setCanUndo(undoStack.current.length > 0);
     }, []);
@@ -243,7 +252,8 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         redoStack.current = redoStack.current.slice(0, -1);
         setSavedLayouts(cur => {
             undoStack.current = [...undoStack.current.slice(-49), { ...cur }];
-            setCanRedo(true);
+            setCanUndo(true);
+            localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(next));
             return next;
         });
         setPendingLayouts({});
@@ -357,6 +367,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
             isLocked, toggleLock,
             undo, redo, canUndo, canRedo,
             getVisibility, setVisibility, isHiddenForUser,
+            takeSnapshot,
         }}>
             {children}
         </LayoutEditorContext.Provider>

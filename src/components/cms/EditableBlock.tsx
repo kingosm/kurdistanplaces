@@ -49,7 +49,7 @@ const ALL_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
 export function EditableBlock({ id, page, children, className }: EditableBlockProps) {
     const { layout, isSelected, select, deselect, update, isLayoutEditMode } =
         useEditableLayout(id, page);
-    const { isLocked, toggleLock, isHiddenForUser } = useLayoutEditor();
+    const { isLocked, toggleLock, isHiddenForUser, takeSnapshot } = useLayoutEditor();
     const locked = isLocked(id, page);
     const hiddenForUser = isHiddenForUser(id, page);
 
@@ -79,6 +79,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (locked || e.button !== 0) return; // Only left click
         e.preventDefault();
         e.stopPropagation();
+        takeSnapshot();
         select();
         isDragging.current = true;
         startPointer.current = { x: e.clientX, y: e.clientY };
@@ -92,6 +93,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         if (locked || e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
+        takeSnapshot();
         select();
         isResizing.current = handle;
         startPointer.current = { x: e.clientX, y: e.clientY };
@@ -159,6 +161,8 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
         const elRect = el.getBoundingClientRect();
         const prRect = parent.getBoundingClientRect();
         el.style.transform = `translate(${layout.x}px, ${layout.y}px)`;
+
+        takeSnapshot();
         if (dir === "left") update({ x: prRect.left - elRect.left });
         if (dir === "center") update({ x: (prRect.left + prRect.width / 2) - (elRect.left + elRect.width / 2) });
         if (dir === "right") update({ x: prRect.right - elRect.right });
@@ -314,7 +318,14 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
                     <div className="w-px h-3 bg-zinc-600 mx-0.5" />
 
                     {(hasMoved || hasSize) && (
-                        <button onClick={() => update({ x: 0, y: 0, width: null, height: null, fontSize: null })} title="Reset all" className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-amber-400 transition-colors">
+                        <button
+                            onClick={() => {
+                                takeSnapshot();
+                                update({ x: 0, y: 0, width: null, height: null, fontSize: null });
+                            }}
+                            title="Reset all"
+                            className="p-1 rounded hover:bg-white/10 text-zinc-300 hover:text-amber-400 transition-colors"
+                        >
                             <RotateCcw className="w-3 h-3" />
                         </button>
                     )}

@@ -74,12 +74,13 @@ interface LayoutPresetsProps {
 }
 
 export function LayoutPresets({ onClose }: LayoutPresetsProps) {
-    const { setElementLayout, isLayoutEditMode } = useLayoutEditor();
+    const { setElementLayout, isLayoutEditMode, takeSnapshot } = useLayoutEditor();
 
     const applyPreset = (presetId: string) => {
         const preset = PRESETS.find(p => p.id === presetId);
         if (!preset || !isLayoutEditMode) return;
 
+        takeSnapshot();
         for (const [key, layout] of Object.entries(preset.layouts)) {
             const [page, bp, ...idParts] = key.split("|");
             const id = idParts.join("|");
@@ -123,17 +124,19 @@ interface VisibilityTogglesProps {
 }
 
 export function VisibilityToggles({ id, page }: VisibilityTogglesProps) {
-    const { getVisibility, setVisibility } = useLayoutEditor();
+    const { getVisibility, setVisibility, takeSnapshot } = useLayoutEditor();
     const vis = getVisibility(id, page);
 
     const toggle = (field: keyof typeof vis) => {
         if (field === "hideOnLanguages") return; // handled below
+        takeSnapshot();
         setVisibility(id, page, { ...vis, [field]: !vis[field] });
     };
 
     const toggleLang = (code: string) => {
         const langs = vis.hideOnLanguages ?? [];
         const next = langs.includes(code) ? langs.filter(l => l !== code) : [...langs, code];
+        takeSnapshot();
         setVisibility(id, page, { ...vis, hideOnLanguages: next });
     };
 
