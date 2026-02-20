@@ -179,7 +179,21 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
 
     if (!isLayoutEditMode) {
         if (hiddenForUser) return null;
-        return <div className={className}>{children}</div>;
+        const tx = layout.x;
+        const ty = layout.y;
+        return (
+            <div
+                className={className}
+                style={{
+                    transform: (tx || ty) ? `translate(${tx}px, ${ty}px)` : undefined,
+                    width: layout.width ? `${layout.width}px` : undefined,
+                    height: layout.height ? `${layout.height}px` : undefined,
+                    fontSize: layout.fontSize ? `${layout.fontSize}px` : undefined,
+                }}
+            >
+                {children}
+            </div>
+        );
     }
 
     // ── Derived render values ─────────────────────────────────────────────────
