@@ -61,6 +61,7 @@ interface LayoutEditorContextType {
     setVisibility: (id: string, page: string, rule: VisibilityRule) => void;
     isHiddenForUser: (id: string, page: string) => boolean;
     takeSnapshot: () => void;
+    isPreviewMode: boolean;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -90,14 +91,14 @@ const fromStorage = (key: string, fallback: any) => {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
-    const { isAdmin } = useUser();
+export const LayoutEditorProvider = ({ children, forcedBreakpoint: initialForcedBreakpoint }: { children: ReactNode, forcedBreakpoint?: Breakpoint }) => {
+    const { isAdmin, isPreviewMode } = useUser();
     const { language } = useLanguage();
     const { toast } = useToast();
 
     const [isLayoutEditMode, setIsLayoutEditMode] = useState(false);
     const [autoBreakpoint, setAutoBreakpoint] = useState<Breakpoint>(detectBreakpoint);
-    const [forcedBreakpoint, setForcedBreakpoint] = useState<Breakpoint | null>(null);
+    const [forcedBreakpoint, setForcedBreakpoint] = useState<Breakpoint | null>(initialForcedBreakpoint ?? null);
     const activeBreakpoint: Breakpoint = forcedBreakpoint ?? autoBreakpoint;
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -367,7 +368,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
             isLocked, toggleLock,
             undo, redo, canUndo, canRedo,
             getVisibility, setVisibility, isHiddenForUser,
-            takeSnapshot,
+            takeSnapshot, isPreviewMode,
         }}>
             {children}
         </LayoutEditorContext.Provider>

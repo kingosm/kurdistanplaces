@@ -49,7 +49,7 @@ const ALL_HANDLES: ResizeHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
 export function EditableBlock({ id, page, children, className }: EditableBlockProps) {
     const { layout, isSelected, select, deselect, update, isLayoutEditMode } =
         useEditableLayout(id, page);
-    const { isLocked, toggleLock, isHiddenForUser, takeSnapshot } = useLayoutEditor();
+    const { isLocked, toggleLock, isHiddenForUser, takeSnapshot, isPreviewMode } = useLayoutEditor();
     const locked = isLocked(id, page);
     const hiddenForUser = isHiddenForUser(id, page);
 
@@ -231,11 +231,11 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
             {/* ── Outline ring ─────────────────────────────────────────────── */}
             <div className={cn(
                 "absolute inset-0 pointer-events-none rounded transition-all duration-150",
-                locked
+                locked && !isPreviewMode
                     ? "ring-2 ring-rose-500/60 ring-dashed"
-                    : isSelected
+                    : isSelected && !isPreviewMode
                         ? "ring-2 ring-amber-400 ring-offset-1"
-                        : "group-hover:ring-2 group-hover:ring-amber-400/50 group-hover:ring-dashed"
+                        : !isPreviewMode && "group-hover:ring-2 group-hover:ring-amber-400/50 group-hover:ring-dashed"
             )} />
 
             {/* ── Hover Drag Handle -- Visible when not selected (like tabs) ── */}
@@ -285,7 +285,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
             )}
 
             {/* ── Lock badge ────────────────────────────────────────────────── */}
-            {locked && (
+            {locked && !isPreviewMode && (
                 <div className="absolute top-1 left-1 z-50 bg-rose-500/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded pointer-events-none flex items-center gap-1">
                     <Lock className="w-2.5 h-2.5" /> LOCKED
                 </div>

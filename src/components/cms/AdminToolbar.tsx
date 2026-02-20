@@ -8,6 +8,7 @@ import { LayoutPresets } from "@/components/cms/LayoutPresets";
 import {
     Pencil, Save, X, Loader2, Layout, Layers,
     Undo2, Redo2, Smartphone, Tablet, Monitor,
+    Eye, EyeOff
 } from "lucide-react";
 
 const LANG_LABELS: Record<string, string> = { en: "EN", ku: "KU", ar: "AR" };
@@ -17,7 +18,7 @@ const LANG_LABELS: Record<string, string> = { en: "EN", ku: "KU", ar: "AR" };
  * Controls: Text Edit, Layout Edit, Breakpoint switch, Undo, Redo, Save, Cancel.
  */
 export function AdminToolbar() {
-    const { isAdmin, loading } = useUser();
+    const { isAdmin, loading, isPreviewMode, setPreviewMode } = useUser();
     const { isEditMode, toggleEditMode, saveAll, cancelAll, hasPendingEdits, isSaving } = useEditMode();
     const {
         isLayoutEditMode, toggleLayoutEditMode,
@@ -35,6 +36,19 @@ export function AdminToolbar() {
         : window.location.pathname.replace(/^\//, "").replace(/\//g, "_");
 
     const anyActive = isEditMode || isLayoutEditMode;
+
+    if (isPreviewMode) {
+        return (
+            <button
+                onClick={() => setPreviewMode(false)}
+                className="fixed bottom-4 right-4 z-[9999] bg-zinc-900/95 border border-zinc-700 text-white p-2.5 rounded-full shadow-2xl hover:bg-amber-500 hover:text-black transition-all group flex items-center gap-2"
+                title="Exit Preview Mode"
+            >
+                <EyeOff className="w-4 h-4" />
+                <span className="text-xs font-bold hidden group-hover:inline pr-1">Exit Preview</span>
+            </button>
+        );
+    }
 
     return (
         <div
@@ -75,6 +89,18 @@ export function AdminToolbar() {
                 title={isLayoutEditMode ? "Exit Layout Edit" : "Layout Edit"}
                 icon={<Layout className="w-3 h-3" />}
                 label="Layout"
+            />
+
+            <Sep />
+
+            {/* Preview Mode toggle */}
+            <ToolBtn
+                onClick={() => setPreviewMode(true)}
+                active={false}
+                anyActive={anyActive}
+                title="View as User (Preview)"
+                icon={<Eye className="w-3.5 h-3.5" />}
+                label="Preview"
             />
 
             {/* Breakpoint switcher — only in layout edit mode */}

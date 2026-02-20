@@ -14,6 +14,8 @@ interface UserContextType {
     profile: Profile | null;
     loading: boolean;
     isAdmin: boolean;
+    isPreviewMode: boolean;
+    setPreviewMode: (val: boolean) => void;
     refreshProfile: () => Promise<void>;
 }
 
@@ -35,7 +37,13 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(() => safeParse('kp_user_object'));
     const [profile, setProfile] = useState<Profile | null>(() => safeParse('kp_user_profile'));
     const [isAdmin, setIsAdmin] = useState(() => localStorage.getItem('kp_user_is_admin') === 'true');
+    const [isPreviewMode, setPreviewModeState] = useState(() => localStorage.getItem('kp_user_preview_mode') === 'true');
     const [loading, setLoading] = useState(true);
+
+    const setPreviewMode = (val: boolean) => {
+        setPreviewModeState(val);
+        localStorage.setItem('kp_user_preview_mode', String(val));
+    };
 
     // Helper to update user and cache
     const setUserWithCache = (newUser: User | null) => {
@@ -164,7 +172,11 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, profile, loading, isAdmin, refreshProfile }}>
+        <UserContext.Provider value={{
+            user, profile, loading, isAdmin,
+            isPreviewMode, setPreviewMode,
+            refreshProfile
+        }}>
             {children}
         </UserContext.Provider>
     );

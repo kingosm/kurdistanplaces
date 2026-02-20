@@ -22,7 +22,7 @@ import { SortableNavLinks } from "@/components/cms/SortableNavLinks";
 export function Header() {
   const { t, isRTL } = useLanguage();
 
-  const { user, profile, isAdmin, loading } = useUser(); // Use UserContext
+  const { user, profile, isAdmin, loading, isPreviewMode } = useUser(); // Use UserContext
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ export function Header() {
                       <span className="font-medium">{t('nav.favorites')}</span>
                     </Link>
                   </DropdownMenuItem>
-                  {isAdmin && (
+                  {isAdmin && !isPreviewMode && (
                     <>
                       <DropdownMenuSeparator className="opacity-10" />
                       <DropdownMenuItem asChild className="cursor-pointer">
