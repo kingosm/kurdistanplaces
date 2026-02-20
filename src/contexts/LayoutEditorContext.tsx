@@ -206,10 +206,27 @@ export const LayoutEditorProvider = ({ children, forcedBreakpoint: initialForced
     // READ  → actual device breakpoint (never shows mobile edits on desktop)
     // WRITE → active editing breakpoint (can be forced by admin)
     const getLayout = (id: string, page: string): ElementLayout => {
-        const readKey = makeKey(page, autoBreakpoint, id);
         const editKey = makeKey(page, activeBreakpoint, id);
-        if (isLayoutEditMode && pendingLayouts[editKey]) return pendingLayouts[editKey];
-        return savedLayouts[readKey] ?? DEFAULT_LAYOUT;
+        const autoKey = makeKey(page, autoBreakpoint, id);
+        const desktopKey = makeKey(page, "desktop", id);
+
+        // 1. If we are editing, always show what's in the current "shuttle" (pendingLayouts)
+        if (isLayoutEditMode && pendingLayouts[editKey]) {
+            return pendingLayouts[editKey];
+        }
+
+        // 2. If we are editing and have something saved for the active breakpoint, show it
+        if (isLayoutEditMode && savedLayouts[editKey]) {
+            return savedLayouts[editKey];
+        }
+
+        // 3. Normal user view (or fallback for editing): show saved layout for current device
+        if (savedLayouts[autoKey]) {
+            return savedLayouts[autoKey];
+        }
+
+        // 4. Ultimate fallback: Use desktop layout as baseline if mobile/tablet is missing
+        return savedLayouts[desktopKey] ?? DEFAULT_LAYOUT;
     };
 
     const takeSnapshot = useCallback(() => {
@@ -347,12 +364,13 @@ export const LayoutEditorProvider = ({ children, forcedBreakpoint: initialForced
 
     const isHiddenForUser = useCallback((id: string, page: string): boolean => {
         const layout = getLayout(id, page);
-        if (layout.hideOnMobile && autoBreakpoint === "mobile") return true;
-        if (layout.hideOnTablet && autoBreakpoint === "tablet") return true;
-        if (layout.hideOnDesktop && autoBreakpoint === "desktop") return true;
+        // Use activeBreakpoint (which respects toolbar simulation) instead of autoBreakpoint
+        if (layout.hideOnMobile && activeBreakpoint === "mobile") return true;
+        if (layout.hideOnTablet && activeBreakpoint === "tablet") return true;
+        if (layout.hideOnDesktop && activeBreakpoint === "desktop") return true;
         if (layout.hideOnLanguages?.includes(language)) return true;
         return false;
-    }, [getLayout, autoBreakpoint, language]);
+    }, [getLayout, activeBreakpoint, language]);
 
     // ─────────────────────────────────────────────────────────────────────────
 
