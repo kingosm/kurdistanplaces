@@ -75,7 +75,7 @@ export function Header() {
           <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
             <EditableBlock id="header_nav" page="__global__">
               <Link to="/" className="group shrink-0">
-                <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
+                <h1 className="text-xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary flex items-center leading-tight">
                   <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
                 </h1>
               </Link>
@@ -153,7 +153,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden rounded-xl md:rounded-2xl w-8 h-8 md:w-10 md:h-10"
+              className="lg:hidden rounded-xl md:rounded-2xl w-8 h-8 md:w-10 md:h-10 text-foreground"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-5 h-5 md:w-6 md:h-6" /> : <Menu className="w-5 h-5 md:w-6 md:h-6" />}

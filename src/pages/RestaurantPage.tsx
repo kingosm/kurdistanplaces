@@ -285,7 +285,7 @@ const RestaurantPage = () => {
           <img
             src={restaurant.image_url || "/placeholder.svg"}
             alt={restaurant.name}
-            className="w-full h-full object-cover fixed top-0 left-0 -z-10" // Simple parallax via fixed positioning
+            className="w-full h-full object-cover md:fixed absolute top-0 left-0 -z-10" // Simple parallax via fixed positioning on desktop, absolute on mobile
             style={{ height: '100vh' }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
@@ -342,7 +342,7 @@ const RestaurantPage = () => {
       </section>
 
       {/* Sticky Mobile Navigation & Actions */}
-      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-white/5 transition-all duration-500">
+      <div className="sticky top-0 z-40 bg-background backdrop-blur-xl border-b border-white/5 transition-all duration-500">
         <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-4">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto overflow-x-auto no-scrollbar">
             <TabsList className="bg-transparent h-12 w-full md:w-auto justify-start md:justify-center gap-2 p-1 bg-secondary/30 rounded-full border border-white/5">
@@ -421,7 +421,7 @@ const RestaurantPage = () => {
         </div>
       </div>
 
-      <section className="py-12 md:py-24 bg-background relative pb-32 md:pb-24">
+      <section className="py-12 md:py-24 bg-background relative pb-32 md:pb-24 z-10">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
             <div className="lg:col-span-8">
