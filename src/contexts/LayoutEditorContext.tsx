@@ -130,7 +130,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         try {
             const { data, error } = await (supabase as any)
                 .from("layout_settings")
-                .select("page_slug, breakpoint, element_id, x, y, width, height, font_size")
+                .select("page_slug, breakpoint, element_id, x, y, width, height, font_size, hide_on_mobile, hide_on_tablet, hide_on_desktop, hide_on_languages")
                 .eq("language", language);
             if (!error && data) {
                 const loaded: Record<string, ElementLayout> = {};
@@ -141,6 +141,10 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                         width: row.width ?? null,
                         height: row.height ?? null,
                         fontSize: (row as any).font_size ?? null,
+                        hideOnMobile: (row as any).hide_on_mobile ?? false,
+                        hideOnTablet: (row as any).hide_on_tablet ?? false,
+                        hideOnDesktop: (row as any).hide_on_desktop ?? false,
+                        hideOnLanguages: (row as any).hide_on_languages ?? [],
                     };
                 }
                 setSavedLayouts(loaded);
