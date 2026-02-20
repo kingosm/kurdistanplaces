@@ -76,7 +76,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
     // ── Drag — triggered by specific handle or toolbar button ────────────────
 
     const handleDragStart = useCallback((e: React.PointerEvent) => {
-        if (locked) return;
+        if (locked || e.button !== 0) return; // Only left click
         e.preventDefault();
         e.stopPropagation();
         select();
@@ -89,7 +89,7 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
     // ── Resize handles ───────────────────────────────────────────────────────
 
     const handleResizeStart = useCallback((e: React.PointerEvent<HTMLDivElement>, handle: ResizeHandle) => {
-        if (locked) return;
+        if (locked || e.button !== 0) return;
         e.preventDefault();
         e.stopPropagation();
         select();
@@ -108,6 +108,13 @@ export function EditableBlock({ id, page, children, className }: EditableBlockPr
     // ── Combined pointer move ────────────────────────────────────────────────
 
     const handlePointerMove = useCallback((e: React.PointerEvent) => {
+        // Safety: detection if button was released outside window
+        if ((isDragging.current || isResizing.current) && (e.buttons & 1) === 0) {
+            isDragging.current = false;
+            isResizing.current = null;
+            return;
+        }
+
         const snap = (v: number) => Math.round(v / 8) * 8;
         const dx = e.clientX - startPointer.current.x;
         const dy = e.clientY - startPointer.current.y;
