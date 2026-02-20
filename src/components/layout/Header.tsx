@@ -71,20 +71,23 @@ export function Header() {
           </EditableBlock>
 
           {/* Centered Word & Desktop Nav */}
-          <EditableBlock id="header_nav" page="__global__">
-            <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
+          {/* Centered Word & Desktop Nav */}
+          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
+            <EditableBlock id="header_nav" page="__global__">
               <Link to="/" className="group shrink-0">
                 <h1 className="text-2xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary whitespace-nowrap flex items-center leading-normal">
                   <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
                 </h1>
               </Link>
+            </EditableBlock>
 
-              {/* Desktop Navigation — drag to reorder in Layout Edit mode */}
+            {/* Desktop Navigation — drag to reorder in Layout Edit mode */}
+            <EditableBlock id="header_links" page="__global__">
               <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
                 <SortableNavLinks />
               </nav>
-            </div>
-          </EditableBlock>
+            </EditableBlock>
+          </div>
 
           {/* User Actions - Far Right */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
