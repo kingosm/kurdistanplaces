@@ -22,6 +22,10 @@ export interface ElementLayout {
     width?: number | null;
     height?: number | null;
     fontSize?: number | null;  // px — scales text inside the block
+    hideOnMobile?: boolean;
+    hideOnTablet?: boolean;
+    hideOnDesktop?: boolean;
+    hideOnLanguages?: string[];
 }
 
 export interface VisibilityRule {
@@ -187,6 +191,8 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
 
     // ── Layout get / set ──────────────────────────────────────────────────────
 
+    // ── Layout get / set ──────────────────────────────────────────────────────
+
     // READ  → actual device breakpoint (never shows mobile edits on desktop)
     // WRITE → active editing breakpoint (can be forced by admin)
     const getLayout = (id: string, page: string): ElementLayout => {
@@ -229,7 +235,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
         redoStack.current = redoStack.current.slice(0, -1);
         setSavedLayouts(cur => {
             undoStack.current = [...undoStack.current.slice(-49), { ...cur }];
-            setCanUndo(true);
+            setCanRedo(true);
             return next;
         });
         setPendingLayouts({});
@@ -254,6 +260,10 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                     x: l.x, y: l.y,
                     width: l.width ?? null, height: l.height ?? null,
                     font_size: l.fontSize ?? null,
+                    hide_on_mobile: l.hideOnMobile ?? false,
+                    hide_on_tablet: l.hideOnTablet ?? false,
+                    hide_on_desktop: l.hideOnDesktop ?? false,
+                    hide_on_languages: l.hideOnLanguages ?? [],
                     updated_at: new Date().toISOString(),
                 };
             });
@@ -291,27 +301,30 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
 
     // ── Visibility ────────────────────────────────────────────────────────────
 
-    const getVisibility = useCallback((id: string, page: string): VisibilityRule =>
-        visibilityRules[`${page}|${id}`] ?? {}, [visibilityRules]);
+    // Now merged into layout state, so this is just a helper wrapper
+    const getVisibility = useCallback((id: string, page: string): VisibilityRule => {
+        const layout = getLayout(id, page);
+        return {
+            hideOnMobile: layout.hideOnMobile,
+            hideOnTablet: layout.hideOnTablet,
+            hideOnDesktop: layout.hideOnDesktop,
+            hideOnLanguages: layout.hideOnLanguages,
+        };
+    }, [getLayout]); // Dependent on getLayout
 
     const setVisibility = useCallback((id: string, page: string, rule: VisibilityRule) => {
-        if (!isAdmin) return;
-        setVisibilityRules(prev => {
-            const next = { ...prev, [`${page}|${id}`]: rule };
-            localStorage.setItem(VISIBILITY_STORAGE_KEY, JSON.stringify(next));
-            return next;
-        });
-    }, [isAdmin]);
+        const current = getLayout(id, page);
+        setElementLayout(id, page, { ...current, ...rule });
+    }, [getLayout, setElementLayout]);
 
     const isHiddenForUser = useCallback((id: string, page: string): boolean => {
-        const rule = visibilityRules[`${page}|${id}`];
-        if (!rule) return false;
-        if (rule.hideOnMobile && autoBreakpoint === "mobile") return true;
-        if (rule.hideOnTablet && autoBreakpoint === "tablet") return true;
-        if (rule.hideOnDesktop && autoBreakpoint === "desktop") return true;
-        if (rule.hideOnLanguages?.includes(language)) return true;
+        const layout = getLayout(id, page);
+        if (layout.hideOnMobile && autoBreakpoint === "mobile") return true;
+        if (layout.hideOnTablet && autoBreakpoint === "tablet") return true;
+        if (layout.hideOnDesktop && autoBreakpoint === "desktop") return true;
+        if (layout.hideOnLanguages?.includes(language)) return true;
         return false;
-    }, [visibilityRules, autoBreakpoint, language]);
+    }, [getLayout, autoBreakpoint, language]);
 
     // ─────────────────────────────────────────────────────────────────────────
 
