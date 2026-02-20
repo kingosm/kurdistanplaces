@@ -69,6 +69,7 @@ const LayoutEditorContext = createContext<LayoutEditorContextType | undefined>(u
 const DEFAULT_LAYOUT: ElementLayout = { x: 0, y: 0, fontSize: null };
 const LOCK_STORAGE_KEY = "cms_locked_elements";
 const VISIBILITY_STORAGE_KEY = "cms_element_visibility";
+const LAYOUT_STORAGE_KEY = "cms_layout_data";
 
 const detectBreakpoint = (): Breakpoint => {
     if (typeof window === "undefined") return "desktop";
@@ -99,7 +100,9 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
     const activeBreakpoint: Breakpoint = forcedBreakpoint ?? autoBreakpoint;
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
-    const [savedLayouts, setSavedLayouts] = useState<Record<string, ElementLayout>>({});
+    const [savedLayouts, setSavedLayouts] = useState<Record<string, ElementLayout>>(
+        () => fromStorage(LAYOUT_STORAGE_KEY, {})
+    );
     const [pendingLayouts, setPendingLayouts] = useState<Record<string, ElementLayout>>({});
     const [isSavingLayout, setIsSavingLayout] = useState(false);
 
@@ -148,6 +151,7 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                     };
                 }
                 setSavedLayouts(loaded);
+                localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(loaded));
                 undoStack.current = []; redoStack.current = [];
                 setCanUndo(false); setCanRedo(false);
             }
@@ -280,6 +284,15 @@ export const LayoutEditorProvider = ({ children }: { children: ReactNode }) => {
                 Object.keys(n).forEach(k => { if (k.startsWith(`${page}|`)) delete n[k]; });
                 return n;
             });
+
+            // Update local cache with newly saved values
+            setSavedLayouts(prev => {
+                const next = { ...prev };
+                relevant.forEach(([key, l]) => { next[key] = l; });
+                localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(next));
+                return next;
+            });
+
             toast({ title: "✅ Layout saved", description: `${upserts.length} element(s) saved for ${activeBreakpoint}.` });
         } catch (err: any) {
             toast({ title: "Save failed", description: err.message, variant: "destructive" });
