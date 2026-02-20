@@ -322,6 +322,10 @@ const translations: Record<Language, Record<string, string>> = {
         'profile.change_photo': 'Change Photo',
         'profile.photo_updated': 'Photo updated!',
         'profile.photo_changed_desc': 'Your profile picture has been changed',
+
+        // CMS Specific Defaults
+        'footer.email_value': 'hello@kurdistanplaces.com',
+        'footer.phone_value': '+964 750 000 0000',
     },
     ku: {
         'nav.home': 'سەرەکی',
@@ -627,6 +631,10 @@ const translations: Record<Language, Record<string, string>> = {
         'profile.change_photo': 'گۆڕینی وێنە',
         'profile.photo_updated': 'وێنە نوێکرایەوە!',
         'profile.photo_changed_desc': 'وێنەی پڕۆفایلەکەت بە سەرکەوتوویی گۆڕدرا',
+
+        // CMS Specific Defaults
+        'footer.email_value': 'hello@kurdistanplaces.com',
+        'footer.phone_value': '+964 750 000 0000',
     },
     ar: {
         'nav.home': 'الرئيسية',
@@ -931,7 +939,11 @@ const translations: Record<Language, Record<string, string>> = {
         'profile.set_photo': 'تعيين كصورة للملف الشخصي',
         'profile.change_photo': 'تغيير الصورة',
         'profile.photo_updated': 'تم تحديث الصورة!',
-        'profile.photo_changed_desc': 'تم تغيير صورة ملفك الشخصي',
+        'profile.photo_changed_desc': 'تم تغيير صورة ملفك الشخصي بنجاح',
+
+        // CMS Specific Defaults
+        'footer.email_value': 'hello@kurdistanplaces.com',
+        'footer.phone_value': '+964 750 000 0000',
     },
 };
 
@@ -987,7 +999,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
         // Fallback to English if translation not found
         if (!translation) {
-            translation = translations['en'][key] || key;
+            translation = translations['en'][key];
+        }
+
+        // If still not found, return an empty string or null-like indicator
+        // so that EditableText can use its own 'fallback' prop.
+        if (!translation) {
+            return "";
         }
 
         // Replace parameters like {{count}}, {{name}}, etc.
