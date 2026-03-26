@@ -85,7 +85,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
   if (!ads || ads.length === 0) return null;
 
   return (
-    <div className="w-full px-0 md:px-6 lg:px-8 mt-4 mb-4">
+    <div className="w-full px-0 md:px-6 lg:px-8 mt-0 mb-4">
         <div 
         className="group relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-secondary/30 transition-shadow duration-500 hover:shadow-primary/20"
         >
