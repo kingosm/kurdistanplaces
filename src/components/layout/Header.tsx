@@ -68,9 +68,9 @@ export function Header() {
             >
               <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md scale-150" />
             </Link>
-            <Link to="/" className="flex shrink-0 translate-y-[2px] md:translate-y-0">
-              <h1 className="text-lg md:text-3xl font-display font-black tracking-tight transition-colors flex items-center leading-tight">
-                <span className="text-foreground">Kurd</span>{' '}<span className="text-primary italic">Trip</span>
+            <Link to="/" className="flex shrink-0 translate-y-[2px] md:translate-y-0 text-lg md:text-3xl">
+              <h1 className="font-display font-black tracking-tight transition-colors flex items-center leading-tight">
+                <span className="text-foreground">Kurd</span><span className="ml-1 text-primary italic">Trip</span>
               </h1>
             </Link>
           </div>
