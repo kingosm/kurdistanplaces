@@ -79,23 +79,24 @@ const Index = () => {
     hero: (
       <SortableSection key="hero" id="hero">
         <section className="relative min-h-screen flex flex-col items-center overflow-hidden">
-          <div className="absolute inset-0 z-0 bg-black">
+          {/* Global Locked Background Layer — PINNED TO TOP 0 */}
+          <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
             <EditableImage
               contentKey="hero.image"
               fallback="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80"
               alt="Hero background"
               className="w-full h-full object-cover opacity-60"
             />
-            {/* Blinded Shift (Top-down shadow for visibility) */}
-            <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/90 to-transparent opacity-90 z-[1]" />
+            {/* Blinded Contrast Shield for Header */}
+            <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/90 to-transparent opacity-90" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-black/30" />
           </div>
 
-          <div className="w-full max-w-6xl mt-0 pt-24 md:pt-32 px-0 md:px-6 relative z-10 transition-all duration-700">
+          <div className="w-full max-w-6xl mt-0 pt-32 px-0 md:px-6 relative z-10 transition-all duration-700">
             <AdSlider ads={mockAds} />
           </div>
 
-          <div className="flex-1 container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center">
+          <div className="flex-1 container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center pb-20">
             <div className="max-w-4xl mx-auto">
               <EditableBlock id="hero_title" page="index">
                 <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-10 leading-[0.95] text-white drop-shadow-2xl hyphens-none">

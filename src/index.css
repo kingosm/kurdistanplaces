@@ -258,6 +258,12 @@
   .menu-price {
     @apply font-bold text-lg text-primary;
   }
+
+  /* Zero-Gap Fixed Background Utility */
+  .bg-locked-parallax {
+    @apply fixed inset-0 bg-cover bg-center z-[-1] pointer-events-none;
+    will-change: transform;
+  }
 }
 @keyframes float {
 
@@ -308,9 +314,9 @@
     @apply px-4;
   }
 
-  /* Ensure header doesn't overlap content */
+  /* Ensure header doesn't overlap content — RESET to 0 for seamless hero */
   body {
-    @apply pt-20;
+    @apply pt-0;
   }
 
   /* Make buttons more touch-friendly */

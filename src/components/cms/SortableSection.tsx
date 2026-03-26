@@ -64,8 +64,8 @@ export function SortableSection({ id, children, className }: SortableSectionProp
                 </div>
             )}
 
-            {/* Section content — offset top padding in edit mode so handle doesn't overlap */}
-            <div className={isEditMode ? "pt-12" : ""}>
+            {/* Section content — REMOVED pt-12 to satisfy zero-gap requirement */}
+            <div>
                 {children}
             </div>
         </div>
