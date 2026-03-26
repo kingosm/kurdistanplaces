@@ -54,22 +54,22 @@ export function Header() {
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-in-out",
       isScrolled
-        ? "py-3 bg-background/60 backdrop-blur-3xl border-b border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]"
-        : "py-3 md:py-8 bg-transparent"
+        ? "py-2 bg-background/60 backdrop-blur-3xl border-b border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.1)]"
+        : "py-2 md:py-6 bg-transparent"
     )}>
       {/* Force LTR container to keep logo left and buttons right regardless of language */}
       <div className="container mx-auto px-4 md:px-8" dir="ltr">
         <div className="flex items-center justify-between gap-4">
           {/* Logo & Brand Name - Left */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 md:gap-3">
             <Link
               to="/"
-              className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0"
+              className="w-12 h-12 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0"
             >
-              <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
+              <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md scale-125" />
             </Link>
             <Link to="/" className="flex shrink-0">
-              <h1 className="text-xl md:text-3xl font-display font-black tracking-tighter transition-colors flex items-center leading-tight">
+              <h1 className="text-lg md:text-3xl font-display font-black tracking-tight transition-colors flex items-center leading-tight">
                 <span className="text-foreground">Kurd</span>
                 <span className="text-primary">Trip</span>
               </h1>
@@ -92,7 +92,7 @@ export function Header() {
           </div>
 
           {/* User Actions - Far Right */}
-          <div className="flex items-center gap-2 md:gap-4 shrink-0">
+          <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <ThemeToggle />
             <LanguageSwitcher />
 
