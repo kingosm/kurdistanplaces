@@ -10,8 +10,33 @@ import { EditableBlock } from "@/components/cms/EditableBlock";
 import { SortablePage } from "@/components/cms/SortablePage";
 import { SortableSection } from "@/components/cms/SortableSection";
 import { useEditMode } from "@/contexts/EditModeContext";
+import { AdSlider, Ad } from "@/components/ads/AdSlider";
 
-const DEFAULT_ORDER = ["hero", "cta"];
+const DEFAULT_ORDER = ["hero", "ads", "cta"];
+
+const mockAds: Ad[] = [
+  {
+    id: "ad-1",
+    type: "video",
+    url: "https://www.w3schools.com/html/mov_bbb.mp4",
+    targetUrl: "https://example.com/promo1",
+    alt: "Video Advertisement"
+  },
+  {
+    id: "ad-2",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1600&q=80",
+    targetUrl: "https://example.com/promo2",
+    alt: "Partner Promotion"
+  },
+  {
+    id: "ad-3",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80",
+    targetUrl: "https://example.com/promo3",
+    alt: "Erbil Markets Ad"
+  }
+];
 
 const Index = () => {
   const { t } = useLanguage();
@@ -83,6 +108,14 @@ const Index = () => {
               </EditableBlock>
             </div>
           </div>
+        </section>
+      </SortableSection>
+    ),
+
+    ads: (
+      <SortableSection key="ads" id="ads">
+        <section className="bg-background pt-12 pb-6">
+          <AdSlider ads={mockAds} />
         </section>
       </SortableSection>
     ),
