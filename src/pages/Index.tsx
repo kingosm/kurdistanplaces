@@ -78,7 +78,7 @@ const Index = () => {
   const sections: Record<string, JSX.Element> = {
     hero: (
       <SortableSection key="hero" id="hero">
-        <section className="relative min-h-[70vh] md:h-[85vh] flex flex-col items-center overflow-hidden">
+        <section className="relative min-h-screen flex flex-col items-center overflow-hidden">
           <div className="absolute inset-0 z-0 bg-black">
             <EditableImage
               contentKey="hero.image"
@@ -86,10 +86,12 @@ const Index = () => {
               alt="Hero background"
               className="w-full h-full object-cover opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-black/40" />
+            {/* Top-down contrast gradient for transparent header */}
+            <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/80 to-transparent opacity-80 z-[1]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-black/30" />
           </div>
 
-          <div className="w-full max-w-6xl mt-0 md:mt-20 px-0 md:px-6 relative z-10 transition-all duration-700">
+          <div className="w-full max-w-6xl mt-24 md:mt-32 px-0 md:px-6 relative z-10 transition-all duration-700">
             <AdSlider ads={mockAds} />
           </div>
 
