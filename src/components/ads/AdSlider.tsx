@@ -149,7 +149,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
                 variant="ghost" 
                 size="icon" 
                 onClick={(e) => { e.stopPropagation(); scrollPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/50 border border-white/10 text-white rounded-full hover:bg-black/80 hover:scale-110 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/50 border border-white/10 text-white rounded-full hover:bg-black/80 hover:scale-110 backdrop-blur-xl opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300"
             >
                 <ChevronLeft className="w-6 h-6" />
             </Button>
@@ -157,7 +157,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
                 variant="ghost" 
                 size="icon" 
                 onClick={(e) => { e.stopPropagation(); scrollNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/50 border border-white/10 text-white rounded-full hover:bg-black/80 hover:scale-110 backdrop-blur-xl opacity-0 group-hover:opacity-100 transition-all duration-300"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/50 border border-white/10 text-white rounded-full hover:bg-black/80 hover:scale-110 backdrop-blur-xl opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300"
             >
                 <ChevronRight className="w-6 h-6" />
             </Button>
