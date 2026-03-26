@@ -182,7 +182,7 @@ const AuthPage = () => {
     <Button
       type="button"
       variant="outline"
-      className="w-full pill-button min-h-[4rem] h-auto py-4 text-lg border-white/10 hover:bg-white/5 bg-secondary/30 gap-3 leading-normal"
+      className="w-full pill-button min-h-[4rem] h-auto py-4 text-lg border-primary/30 hover:bg-primary/5 bg-transparent shadow-sm gap-3 leading-normal transition-all"
       onClick={handleGoogleLogin}
       disabled={isLoading}
     >
@@ -323,7 +323,7 @@ const AuthPage = () => {
 
                   <div className="relative flex items-center justify-center my-8">
                     <div className="absolute inset-x-0 h-px bg-white/10" />
-                    <span className="relative bg-[#1A1F2C] px-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="relative bg-background px-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       {t('auth.or_continue')}
                     </span>
                   </div>
@@ -403,7 +403,7 @@ const AuthPage = () => {
 
                   <div className="relative flex items-center justify-center my-8">
                     <div className="absolute inset-x-0 h-px bg-white/10" />
-                    <span className="relative bg-[#1A1F2C] px-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                    <span className="relative bg-background px-4 text-xs font-bold text-muted-foreground uppercase tracking-widest">
                       {t('auth.or_continue')}
                     </span>
                   </div>
