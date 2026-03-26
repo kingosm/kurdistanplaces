@@ -70,14 +70,14 @@ export function Header() {
             </Link>
             <Link to="/" className="flex shrink-0 translate-y-[2px] md:translate-y-0 text-lg md:text-3xl">
               <h1 className="font-display font-black tracking-tight transition-colors flex items-center leading-tight">
-                <span className="text-foreground">Kurd</span><span className="ml-[1px] text-primary italic">Trip</span>
+                <span className="text-foreground">Kurd</span><span className="ml-[0.5px] text-primary italic">Trip</span>
               </h1>
             </Link>
           </div>
 
           {/* Centered Search Bar (Airbnb Style) */}
           <div className="hidden md:flex flex-1 max-w-sm lg:max-w-md mx-auto items-center px-4">
-            <div 
+            <div
               onClick={() => navigate('/search')}
               className="flex items-center w-full bg-background border border-border rounded-full pl-6 pr-2 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-card"
             >
