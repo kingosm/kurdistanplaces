@@ -94,7 +94,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
   if (!ads || ads.length === 0) return null;
 
   return (
-    <div className="w-full px-2 md:px-6 lg:px-8 mt-4 mb-4">
+    <div className="w-full px-0 md:px-6 lg:px-8 mt-4 mb-4">
         <div 
         className="group relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-secondary/30 transition-shadow duration-500 hover:shadow-primary/20"
         onMouseEnter={() => setIsPaused(true)}
@@ -109,7 +109,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
             <div className="flex">
             {ads.map((ad, idx) => (
                 <div 
-                className="flex-[0_0_100%] min-w-0 relative aspect-[16/9] md:aspect-[21/6] lg:aspect-[24/5] bg-black/60 flex items-center justify-center overflow-hidden backdrop-blur-md"
+                className="flex-[0_0_100%] min-w-0 relative aspect-[16/11] md:aspect-[21/6] lg:aspect-[24/5] bg-black/60 flex items-center justify-center overflow-hidden backdrop-blur-md"
                 key={ad.id}
                 >
                 {/* Visual loading fallback skeleton underneath */}
