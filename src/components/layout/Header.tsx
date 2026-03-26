@@ -70,7 +70,7 @@ export function Header() {
             </Link>
             <Link to="/" className="flex shrink-0 translate-y-[2px] md:translate-y-0 text-lg md:text-3xl">
               <h1 className="font-display font-black tracking-tight transition-colors flex items-center leading-tight">
-                <span className="text-foreground">Kurd</span><span className="ml-[0.5px] text-primary italic">Trip</span>
+                <span className={cn(isScrolled ? "text-foreground" : "text-white")}>Kurd</span><span className="ml-[0.5px] text-primary italic">Trip</span>
               </h1>
             </Link>
           </div>
