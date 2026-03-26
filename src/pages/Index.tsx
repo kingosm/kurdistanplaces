@@ -81,7 +81,7 @@ const Index = () => {
   const sections: Record<string, JSX.Element> = {
     hero: (
       <SortableSection key="hero" id="hero">
-        <section className="relative h-[85vh] flex flex-col items-center overflow-hidden">
+        <section className="relative min-h-[70vh] md:h-[85vh] flex flex-col items-center overflow-hidden">
           <div className="absolute inset-0 z-0 bg-black">
             <EditableImage
               contentKey="hero.image"
@@ -93,14 +93,14 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-background via-black/30 to-black/60" />
           </div>
 
-          <div className="w-full max-w-6xl mt-24 px-4 relative z-10">
+          <div className="w-full max-w-6xl mt-8 md:mt-24 px-2 md:px-4 relative z-10">
             <AdSlider ads={mockAds} />
           </div>
 
           <div className="flex-1 container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center">
             <div className="max-w-4xl mx-auto">
               <EditableBlock id="hero_title" page="index">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white drop-shadow-2xl">
+                <h1 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white drop-shadow-2xl hyphens-none">
                   Discover the Best Restaurants & Markets in Kurdistan
                 </h1>
               </EditableBlock>

@@ -94,7 +94,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
   if (!ads || ads.length === 0) return null;
 
   return (
-    <div className="w-full px-4 md:px-6 lg:px-8 mt-4 mb-4">
+    <div className="w-full px-2 md:px-6 lg:px-8 mt-4 mb-4">
         <div 
         className="group relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-secondary/30 transition-shadow duration-500 hover:shadow-primary/20"
         onMouseEnter={() => setIsPaused(true)}
@@ -167,7 +167,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
                 {ads.map((_, idx) => (
                 <button
                     key={idx}
-                    className={`h-2 rounded-full transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-primary ${idx === selectedIndex ? 'bg-primary w-6' : 'bg-white/40 w-2 hover:bg-white/80'}`}
+                    className={`h-2 min-h-[8px] flex-shrink-0 rounded-full transition-all duration-500 ease-out focus:outline-none focus:ring-2 focus:ring-primary ${idx === selectedIndex ? 'bg-primary w-6 min-w-[24px]' : 'bg-white/40 w-2 min-w-[8px] hover:bg-white/80'}`}
                     onClick={(e) => { e.stopPropagation(); emblaApi?.scrollTo(idx); }}
                     aria-label={`Go to ad ${idx + 1}`}
                 />
