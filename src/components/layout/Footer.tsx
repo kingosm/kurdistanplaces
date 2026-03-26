@@ -21,11 +21,11 @@ export const Footer = () => {
             <div className="space-y-6">
               <Link to="/" className="inline-block group">
                 <div className="flex items-center gap-3 mb-2">
-                  <Link to="/" className="w-24 h-24 md:w-32 md:h-32 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0">
+                  <Link to="/" className="w-20 h-20 md:w-24 md:h-24 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0">
                     <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
                   </Link>
                   <div className="flex flex-col">
-                    <span className="text-5xl md:text-6xl font-black tracking-tighter flex items-center leading-tight uppercase">
+                    <span className="text-4xl md:text-5xl font-black tracking-tighter flex items-center leading-tight uppercase">
                       <span className="text-foreground">Kurd</span><span className="text-primary italic">Trip</span>
                     </span>
                   <span className="text-[10px] uppercase tracking-[0.4em] font-black text-primary opacity-70">
