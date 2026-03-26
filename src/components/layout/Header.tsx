@@ -70,7 +70,7 @@ export function Header() {
             </Link>
             <Link to="/" className="flex shrink-0">
               <h1 className="text-xl md:text-3xl font-display font-black tracking-tight transition-colors flex items-center leading-tight">
-                <span className="text-foreground">Kurd</span><span className="text-primary italic">Trip</span>
+                <span className="text-foreground">Kurd</span>{' '}<span className="text-primary italic">Trip</span>
               </h1>
             </Link>
           </div>
