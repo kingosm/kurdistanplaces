@@ -14,26 +14,7 @@ import { AdSlider, Ad } from "@/components/ads/AdSlider";
 
 const DEFAULT_ORDER = ["hero", "cta"];
 
-const mockAds: Ad[] = [
-  {
-    id: "ad-1",
-    type: "image",
-    url: "https://images.unsplash.com/photo-1590490359854-dfba19688d70?auto=format&fit=crop&w=1600&q=80",
-    alt: "Authentic Kurdish Cuisine"
-  },
-  {
-    id: "ad-2",
-    type: "image",
-    url: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80",
-    alt: "Breathtaking Nature"
-  },
-  {
-    id: "ad-3",
-    type: "image",
-    url: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=1600&q=80",
-    alt: "Modern Erbil Infrastructure"
-  }
-];
+
 
 const Index = () => {
   const { t } = useLanguage();
@@ -42,15 +23,16 @@ const Index = () => {
 
   const [stats, setStats] = useState({ places: 0, community: 0 });
   const [heroSearchQuery, setHeroSearchQuery] = useState("");
+  const [ads, setAds] = useState<Ad[]>([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const { count: placesCount } = await supabase
+        const { count: placesCount } = await (supabase as any)
           .from('restaurants')
           .select('*', { count: 'exact', head: true });
 
-        const { count: communityCount } = await supabase
+        const { count: communityCount } = await (supabase as any)
           .from('profiles')
           .select('*', { count: 'exact', head: true });
 
@@ -62,7 +44,33 @@ const Index = () => {
         console.error('Error fetching stats:', error);
       }
     };
+
+    const fetchAds = async () => {
+      try {
+        const { data, error } = await (supabase as any)
+          .from('ads')
+          .select('*')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true });
+
+        if (error) throw error;
+        if (data) {
+          const mappedAds: Ad[] = data.map((ad: any) => ({
+            id: ad.id,
+            type: ad.type as 'image' | 'video',
+            url: ad.url,
+            targetUrl: ad.target_url,
+            alt: ad.title
+          }));
+          setAds(mappedAds);
+        }
+      } catch (error) {
+        console.error('Error fetching ads:', error);
+      }
+    };
+
     fetchStats();
+    fetchAds();
   }, []);
 
   const formatCount = (count: number) => {
@@ -93,7 +101,7 @@ const Index = () => {
           </div>
 
           <div className="w-full max-w-6xl mt-0 pt-0 px-0 md:px-6 relative z-10 transition-all duration-700">
-            <AdSlider ads={mockAds} />
+            {ads.length > 0 && <AdSlider ads={ads} />}
           </div>
 
           <div className="flex-1 container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center pb-20">

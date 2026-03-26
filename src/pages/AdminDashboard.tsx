@@ -65,6 +65,16 @@ interface Category {
     parent_id?: string | null;
 }
 
+interface Ad {
+    id: string;
+    title: string;
+    type: 'image' | 'video';
+    url: string;
+    target_url: string | null;
+    sort_order: number;
+    is_active: boolean;
+}
+
 
 interface Review {
     id: string;
@@ -92,6 +102,7 @@ const AdminDashboard = () => {
     const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [ads, setAds] = useState<Ad[]>([]);
 
     // UI STATE
     const [isLoading, setIsLoading] = useState(true);
@@ -104,6 +115,14 @@ const AdminDashboard = () => {
     const [newRestaurant, setNewRestaurant] = useState<Partial<Restaurant>>({
         is_visible: true,
         opening_hours: ""
+    });
+
+    const [isAdDialogOpen, setIsAdDialogOpen] = useState(false);
+    const [isEditingAd, setIsEditingAd] = useState(false);
+    const [editingAd, setEditingAd] = useState<Partial<Ad>>({
+        type: 'image',
+        is_active: true,
+        sort_order: 0
     });
 
     // Category Dialog State
@@ -181,6 +200,16 @@ const AdminDashboard = () => {
         }
     }, []);
 
+    const fetchAds = useCallback(async () => {
+        const { data, error } = await (supabase as any)
+            .from("ads")
+            .select("*")
+            .order("sort_order", { ascending: true });
+
+        if (error) console.error("Error fetching ads:", error);
+        if (data) setAds(data);
+    }, []);
+
 
 
 
@@ -240,6 +269,7 @@ const AdminDashboard = () => {
             await fetchRestaurants();
             await fetchCategories();
             await fetchReviews();
+            await fetchAds();
 
             setIsLoading(false); // Success!
 
@@ -260,7 +290,7 @@ const AdminDashboard = () => {
                 variant: "destructive",
             });
         }
-    }, [navigate, toast, fetchRestaurants, fetchCategories, fetchReviews]);
+    }, [navigate, toast, fetchRestaurants, fetchCategories, fetchReviews, fetchAds]);
 
 
     // ==========================================
@@ -359,6 +389,42 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleAdSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (isEditingAd && editingAd.id) {
+                const { error } = await (supabase as any)
+                    .from("ads")
+                    .update(editingAd)
+                    .eq("id", editingAd.id);
+                if (error) throw error;
+                toast({ title: "Success", description: "Ad updated." });
+            } else {
+                const { error } = await (supabase as any)
+                    .from("ads")
+                    .insert([editingAd]);
+                if (error) throw error;
+                toast({ title: "Success", description: "Ad created." });
+            }
+            setIsAdDialogOpen(false);
+            fetchAds();
+        } catch (error: any) {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
+    };
+
+    const handleDeleteAd = async (id: string) => {
+        if (!confirm("Delete this advertisement?")) return;
+        try {
+            const { error } = await (supabase as any).from("ads").delete().eq("id", id);
+            if (error) throw error;
+            toast({ title: "Success", description: "Ad deleted." });
+            fetchAds();
+        } catch (error: any) {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+        }
+    };
+
     // ==========================================
     // RENDER
     // ==========================================
@@ -392,6 +458,7 @@ const AdminDashboard = () => {
                         <TabsList className="mb-8">
                             <TabsTrigger value="categories">Places</TabsTrigger>
                             <TabsTrigger value="verticals">Verticals (Global)</TabsTrigger>
+                            <TabsTrigger value="ads">Ads Slider</TabsTrigger>
                             <TabsTrigger value="reviews">Reviews</TabsTrigger>
                             <TabsTrigger value="users">Users</TabsTrigger>
                         </TabsList>
@@ -1174,6 +1241,176 @@ const AdminDashboard = () => {
                                     </Table>
                                 </div>
                             </div>
+                        </TabsContent>
+
+                        <TabsContent value="ads">
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-semibold">Hero Slider Advertisements</h3>
+                                    <Button onClick={() => {
+                                        setEditingAd({ type: 'image', is_active: true, sort_order: ads.length });
+                                        setIsEditingAd(false);
+                                        setIsAdDialogOpen(true);
+                                    }}>
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        Add Ad
+                                    </Button>
+                                </div>
+
+                                <div className="rounded-md border">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Preview</TableHead>
+                                                <TableHead>Title</TableHead>
+                                                <TableHead>Type</TableHead>
+                                                <TableHead>Order</TableHead>
+                                                <TableHead>Status</TableHead>
+                                                <TableHead className="text-right">Actions</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {ads.length === 0 ? (
+                                                <TableRow>
+                                                    <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                                                        No advertisements found.
+                                                    </TableCell>
+                                                </TableRow>
+                                            ) : (
+                                                ads.map((ad) => (
+                                                    <TableRow key={ad.id}>
+                                                        <TableCell>
+                                                            {ad.type === 'image' ? (
+                                                                <img src={ad.url} alt={ad.title} className="w-16 h-10 object-cover rounded border" />
+                                                            ) : (
+                                                                <div className="w-16 h-10 bg-black flex items-center justify-center rounded border text-[8px] text-white">VIDEO</div>
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell className="font-medium">{ad.title}</TableCell>
+                                                        <TableCell className="uppercase text-xs">{ad.type}</TableCell>
+                                                        <TableCell>{ad.sort_order}</TableCell>
+                                                        <TableCell>
+                                                            <span className={cn(
+                                                                "px-2 py-1 rounded-full text-[10px] font-bold",
+                                                                ad.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                                                            )}>
+                                                                {ad.is_active ? "ACTIVE" : "INACTIVE"}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell className="text-right space-x-2">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                onClick={() => {
+                                                                    setEditingAd(ad);
+                                                                    setIsEditingAd(true);
+                                                                    setIsAdDialogOpen(true);
+                                                                }}
+                                                            >
+                                                                <Pencil className="w-4 h-4" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="text-destructive"
+                                                                onClick={() => handleDeleteAd(ad.id)}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            </div>
+
+                            <Dialog open={isAdDialogOpen} onOpenChange={setIsAdDialogOpen}>
+                                <DialogContent className="max-h-[90vh] overflow-y-auto">
+                                    <DialogHeader>
+                                        <DialogTitle>{isEditingAd ? "Edit Advertisement" : "Add New Advertisement"}</DialogTitle>
+                                    </DialogHeader>
+                                    <form onSubmit={handleAdSubmit} className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label>Title *</Label>
+                                            <Input
+                                                value={editingAd?.title || ""}
+                                                onChange={(e) => setEditingAd(prev => ({ ...prev, title: e.target.value }))}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>Type</Label>
+                                                <select
+                                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                                    value={editingAd?.type || "image"}
+                                                    onChange={(e) => setEditingAd(prev => ({ ...prev, type: e.target.value as 'image' | 'video' }))}
+                                                >
+                                                    <option value="image">Image</option>
+                                                    <option value="video">Video</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label>Sort Order</Label>
+                                                <Input
+                                                    type="number"
+                                                    value={editingAd?.sort_order ?? 0}
+                                                    onChange={(e) => setEditingAd(prev => ({ ...prev, sort_order: parseInt(e.target.value) }))}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Target URL (Optional Link)</Label>
+                                            <Input
+                                                value={editingAd?.target_url || ""}
+                                                onChange={(e) => setEditingAd(prev => ({ ...prev, target_url: e.target.value }))}
+                                                placeholder="https://..."
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label>Media</Label>
+                                            <ImageUpload
+                                                value={editingAd?.url || null}
+                                                onUpload={async (file) => {
+                                                    setIsUploading(true);
+                                                    try {
+                                                        const fileExt = file.name.split('.').pop();
+                                                        const fileName = `ads/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                                                        const { error } = await supabase.storage.from('images').upload(fileName, file);
+                                                        if (error) throw error;
+                                                        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(fileName);
+                                                        setEditingAd(prev => ({ ...prev, url: publicUrl }));
+                                                    } catch (error: any) {
+                                                        toast({ title: "Upload Error", description: error.message, variant: "destructive" });
+                                                    } finally {
+                                                        setIsUploading(false);
+                                                    }
+                                                }}
+                                                onRemove={() => setEditingAd(prev => ({ ...prev, url: "" }))}
+                                                isUploading={isUploading}
+                                            />
+                                            <Input
+                                                placeholder="Or enter media URL manually"
+                                                value={editingAd?.url || ""}
+                                                onChange={(e) => setEditingAd(prev => ({ ...prev, url: e.target.value }))}
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <Switch
+                                                checked={editingAd?.is_active ?? true}
+                                                onCheckedChange={(checked) => setEditingAd(prev => ({ ...prev, is_active: checked }))}
+                                            />
+                                            <Label>Active (Visible in Slider)</Label>
+                                        </div>
+                                        <div className="flex justify-end gap-2 pt-4">
+                                            <Button type="button" variant="outline" onClick={() => setIsAdDialogOpen(false)}>Cancel</Button>
+                                            <Button type="submit">{isEditingAd ? "Update Ad" : "Create Ad"}</Button>
+                                        </div>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
                         </TabsContent>
 
                         <TabsContent value="users">
