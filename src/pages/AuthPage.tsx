@@ -315,7 +315,7 @@ const AuthPage = () => {
 
                   <Button
                     type="submit"
-                    className="w-full pill-button hero-gradient min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
+                    className="w-full pill-button bg-blue-600 hover:bg-blue-700 transition-colors font-bold min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
                     disabled={isLoading}
                   >
                     {isLoading ? t('auth.btn.signing_in') : t('auth.btn.signin')}
@@ -395,7 +395,7 @@ const AuthPage = () => {
 
                   <Button
                     type="submit"
-                    className="w-full pill-button hero-gradient min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
+                    className="w-full pill-button bg-blue-600 hover:bg-blue-700 transition-colors font-bold min-h-[4rem] h-auto py-4 text-lg text-white leading-normal"
                     disabled={isLoading}
                   >
                     {isLoading ? t('auth.btn.creating') : t('auth.btn.create')}

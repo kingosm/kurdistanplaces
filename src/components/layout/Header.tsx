@@ -148,7 +148,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild className="hidden lg:flex pill-button hero-gradient px-8 min-h-[2.75rem] h-auto py-2.5 text-background leading-normal">
+              <Button asChild className="hidden lg:flex pill-button bg-blue-600 hover:bg-blue-700 px-8 min-h-[2.75rem] h-auto py-2.5 text-white font-bold leading-normal transition-colors">
                 <Link to="/auth">{t('nav.signin')}</Link>
               </Button>
             )}
@@ -184,7 +184,7 @@ export function Header() {
               ))}
               {!user && (
                 <div className="px-4 pt-6 border-t border-white/5">
-                  <Button asChild className="w-full pill-button hero-gradient text-background">
+                  <Button asChild className="w-full pill-button bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors">
                     <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
                       {t('nav.signin')}
                     </Link>
