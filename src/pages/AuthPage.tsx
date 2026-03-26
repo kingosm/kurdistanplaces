@@ -13,6 +13,7 @@ import { z } from "zod";
 import { EditableText } from "@/components/cms/EditableText";
 
 const AuthPage = () => {
+  const logoUrl = "/logo.png";
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -218,17 +219,12 @@ const AuthPage = () => {
         <div className="w-full max-w-xl relative z-10 animate-reveal">
           {/* Logo & Header */}
           <div className="text-center mb-12">
-            <Link to="/" className="inline-flex items-center gap-4 group mb-6">
-              <div className="w-20 h-20 bg-primary flex items-center justify-center rounded-3xl shadow-2xl shadow-primary/30 transition-all duration-500">
-                <MapPin className="w-10 h-10 text-white" />
-              </div>
-            </Link>
             <div className="flex flex-col items-center gap-3 mb-6">
               <span className="text-primary text-sm font-black uppercase tracking-[0.4em]">
                 <EditableText contentKey="auth.get_started" fallback={t('auth.get_started')} />
               </span>
-              <h1 className="text-5xl font-black tracking-tighter leading-normal pt-2 pb-2">
-                KURDISTAN<span className="text-primary">PLACES</span>
+              <h1 className="text-5xl font-black tracking-tighter leading-normal pt-2 pb-2 uppercase">
+                KURD<span className="text-primary italic">TRIP</span>
               </h1>
               <div className="w-12 h-1.5 bg-primary/20 rounded-full mt-4" />
             </div>
