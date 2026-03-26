@@ -109,13 +109,8 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
             <div className="flex">
             {ads.map((ad, idx) => (
                 <div 
-                className="flex-[0_0_100%] min-w-0 relative aspect-[16/9] md:aspect-[21/6] lg:aspect-[24/5] bg-black/60 flex items-center justify-center cursor-pointer overflow-hidden backdrop-blur-md"
+                className="flex-[0_0_100%] min-w-0 relative aspect-[16/9] md:aspect-[21/6] lg:aspect-[24/5] bg-black/60 flex items-center justify-center overflow-hidden backdrop-blur-md"
                 key={ad.id}
-                onClick={() => {
-                    if (ad.targetUrl) {
-                    window.open(ad.targetUrl, '_blank');
-                    }
-                }}
                 >
                 {/* Visual loading fallback skeleton underneath */}
                 <div className="absolute inset-0 bg-secondary animate-pulse -z-10" />
