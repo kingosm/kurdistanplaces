@@ -12,7 +12,7 @@ import { SortableSection } from "@/components/cms/SortableSection";
 import { useEditMode } from "@/contexts/EditModeContext";
 import { AdSlider, Ad } from "@/components/ads/AdSlider";
 
-const DEFAULT_ORDER = ["hero", "ads", "cta"];
+const DEFAULT_ORDER = ["hero", "cta"];
 
 const mockAds: Ad[] = [
   {
@@ -94,6 +94,9 @@ const Index = () => {
           </div>
 
           <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center pt-20">
+            <div className="w-full max-w-6xl mb-12">
+               <AdSlider ads={mockAds} />
+            </div>
             <div className="max-w-4xl mx-auto">
               <EditableBlock id="hero_title" page="index">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white drop-shadow-2xl">
@@ -111,15 +114,6 @@ const Index = () => {
         </section>
       </SortableSection>
     ),
-
-    ads: (
-      <SortableSection key="ads" id="ads">
-        <section className="bg-background pt-12 pb-6">
-          <AdSlider ads={mockAds} />
-        </section>
-      </SortableSection>
-    ),
-
     cta: (
       <SortableSection key="cta" id="cta">
         <section className="py-24 relative overflow-hidden bg-secondary/20">
