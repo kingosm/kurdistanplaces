@@ -4,6 +4,7 @@ import { Facebook, Instagram, Twitter, Mail, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
+import logoUrl from "@/assets/logo.png";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -20,9 +21,9 @@ export const Footer = () => {
             <div className="space-y-6">
               <Link to="/" className="inline-block group">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 -ml-2">
-                    <img src="/images/logo.png" alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
-                  </div>
+                  <Link to="/" className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0">
+                    <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
+                  </Link>
                   <div className="flex flex-col">
                     <span className="text-4xl font-black tracking-tighter flex items-center leading-tight">
                       <span className="text-white">Kurd</span><span className="text-blue-500">Trip</span>

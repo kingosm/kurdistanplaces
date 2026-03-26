@@ -19,6 +19,7 @@ import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
 import { SortableNavLinks } from "@/components/cms/SortableNavLinks";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import logoUrl from "@/assets/logo.png";
 
 export function Header() {
   const { t, isRTL } = useLanguage();
@@ -65,7 +66,7 @@ export function Header() {
               to="/"
               className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0"
             >
-              <img src="/images/logo.png" alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
+              <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
             </Link>
             <Link to="/" className="hidden lg:block group shrink-0">
               <h1 className="text-3xl font-display font-black tracking-tighter transition-colors flex items-center leading-tight">
