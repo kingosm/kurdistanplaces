@@ -18,7 +18,6 @@ interface AdSliderProps {
 export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   
   // Timer mapping for internal 5-second image auto-scrolling
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -59,13 +58,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
       }
     });
 
-    if (isPaused) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      videoRefs.current[selectedIndex]?.pause();
-      return;
-    } else {
-      videoRefs.current[selectedIndex]?.play().catch(console.error);
-    }
+    videoRefs.current[selectedIndex]?.play().catch(console.error);
 
     const currentAd = ads[selectedIndex];
     if (!currentAd) return;
@@ -83,12 +76,10 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [selectedIndex, isPaused, ads, scrollNext]);
+  }, [selectedIndex, ads, scrollNext]);
 
   const handleVideoEnded = () => {
-    if (!isPaused) {
-      scrollNext();
-    }
+    scrollNext();
   };
 
   if (!ads || ads.length === 0) return null;
@@ -97,13 +88,6 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
     <div className="w-full px-0 md:px-6 lg:px-8 mt-4 mb-4">
         <div 
         className="group relative w-full mx-auto rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-secondary/30 transition-shadow duration-500 hover:shadow-primary/20"
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => {
-            // slight delay before resuming autoplay on mobile tap release
-            setTimeout(() => setIsPaused(false), 2000);
-        }}
         >
         <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex">
