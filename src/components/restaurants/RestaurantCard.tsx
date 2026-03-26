@@ -17,15 +17,21 @@ interface RestaurantCardProps {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
   isActive?: boolean;
+  image_url?: string;
+  avg_rating?: number;
+  review_count?: number;
 }
 
 export function RestaurantCard({
   name,
   slug,
   imageUrl,
+  image_url,
   address,
   rating = 0,
+  avg_rating = 0,
   reviewCount = 0,
+  review_count = 0,
   distance,
   onMouseEnter,
   onMouseLeave,
@@ -33,6 +39,11 @@ export function RestaurantCard({
 }: RestaurantCardProps) {
   const { isEditMode } = useEditMode();
   const [isFavorite, setIsFavorite] = useState(false);
+
+  // Fallback to database snake_case columns if camelCase props aren't provided
+  const finalImage = imageUrl || image_url;
+  const finalRating = rating > 0 ? rating : (avg_rating > 0 ? avg_rating : 0);
+  const finalReviews = reviewCount > 0 ? reviewCount : (review_count > 0 ? review_count : 0);
 
   return (
     <Link
@@ -49,7 +60,7 @@ export function RestaurantCard({
         isActive && "shadow-[0_0_0_2px_hsl(var(--primary))]"
       )}>
         <img
-          src={imageUrl || "/placeholder.svg"}
+          src={finalImage || "/placeholder.svg"}
           alt={name}
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
@@ -80,7 +91,7 @@ export function RestaurantCard({
           <h3 className="text-base font-semibold truncate text-foreground">{name}</h3>
           <div className="flex items-center gap-1 shrink-0">
             <Star className="w-3.5 h-3.5 fill-foreground text-foreground" />
-            <span className="text-sm font-medium">{rating > 0 ? rating.toFixed(2) : "New"}</span>
+            <span className="text-sm font-medium">{finalRating > 0 ? finalRating.toFixed(2) : "New"}</span>
           </div>
         </div>
         
@@ -92,7 +103,7 @@ export function RestaurantCard({
         
         <div className="mt-1 flex items-center">
           <span className="text-sm font-semibold text-foreground underline decoration-1 underline-offset-4">View Details</span>
-          <span className="text-sm text-muted-foreground ml-1">· {reviewCount} reviews</span>
+          <span className="text-sm text-muted-foreground ml-1">· {finalReviews} reviews</span>
         </div>
       </div>
     </Link>

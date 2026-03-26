@@ -19,6 +19,7 @@ const Index = () => {
   const { sectionOrders } = useEditMode();
 
   const [stats, setStats] = useState({ places: 0, community: 0 });
+  const [heroSearchQuery, setHeroSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchStats = async () => {

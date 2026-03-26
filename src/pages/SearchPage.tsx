@@ -81,9 +81,13 @@ const SearchPage = () => {
   useEffect(() => {
     let result = [...restaurants];
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(r => r.name.toLowerCase().includes(q) || (r.description && r.description.toLowerCase().includes(q)));
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(r => 
+        (r.name && r.name.toLowerCase().includes(q)) || 
+        (r.description && r.description.toLowerCase().includes(q)) ||
+        (r.category_name && r.category_name.toLowerCase().includes(q))
+      );
     }
 
     if (selectedCategory) {
