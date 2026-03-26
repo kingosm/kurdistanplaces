@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Twitter, Mail, Phone } from "lucide-react";
+import { Facebook, Instagram, Mail, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
@@ -15,7 +15,7 @@ export const Footer = () => {
       <div className="absolute inset-y-0 right-0 w-1/3 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 max-w-5xl mx-auto">
           {/* Brand Column */}
           <EditableBlock id="footer_brand" page="__global__">
             <div className="space-y-6">
@@ -25,8 +25,8 @@ export const Footer = () => {
                     <img src={logoUrl} alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
                   </Link>
                   <div className="flex flex-col">
-                    <span className="text-4xl font-black tracking-tighter flex items-center leading-tight">
-                      <span className="text-white">Kurd</span><span className="text-blue-500">Trip</span>
+                    <span className="text-4xl font-black tracking-tighter flex items-center leading-tight uppercase">
+                      <span className="text-foreground">Kurd</span><span className="text-primary italic">Trip</span>
                     </span>
                   <span className="text-[10px] uppercase tracking-[0.4em] font-black text-primary opacity-70">
                     <EditableText contentKey="footer.global_discovery" fallback={t('footer.global_discovery')} />
@@ -38,41 +38,31 @@ export const Footer = () => {
                 <EditableText contentKey="footer.description" fallback={t('footer.description')} as="span" />
               </p>
               <div className="flex gap-4 pt-2">
-                {[Instagram, Twitter, Facebook].map((Icon, i) => (
+                {[
+                  { Icon: Instagram, href: "#" },
+                  { 
+                    Icon: () => (
+                      <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" className="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"></path>
+                      </svg>
+                    ), 
+                    href: "#" 
+                  },
+                  { Icon: Facebook, href: "#" }
+                ].map((social, i) => (
                   <a
                     key={i}
-                    href="#"
+                    href={social.href}
                     className="w-10 h-10 rounded-xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/20"
                   >
-                    <Icon className="w-5 h-5" />
+                    <social.Icon />
                   </a>
                 ))}
               </div>
             </div>
           </EditableBlock>
 
-          {/* Navigation */}
-          <div>
-            <h4 className="text-xs font-black mb-8 uppercase tracking-[0.3em] text-primary">
-              <EditableText contentKey="footer.nav.title" fallback={t('footer.nav.title')} />
-            </h4>
-            <nav className="flex flex-col gap-6">
-              {[
-                { to: '/', key: 'footer.nav.home' },
-                { to: '/categories', key: 'footer.nav.categories' },
-                { to: '/nearby', key: 'footer.nav.nearby' },
-                { to: '#', key: 'footer.nav.partner' },
-              ].map((link, i) => (
-                <Link
-                  key={i}
-                  to={link.to}
-                  className="text-lg font-bold text-muted-foreground hover:text-foreground transition-all hover:translate-x-2"
-                >
-                  <EditableText contentKey={link.key} fallback={t(link.key)} />
-                </Link>
-              ))}
-            </nav>
-          </div>
+
 
           {/* Contact */}
           <EditableBlock id="footer_contact" page="__global__">
