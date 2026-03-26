@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
 import { SortableNavLinks } from "@/components/cms/SortableNavLinks";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import logoUrl from "@/assets/logo.png";
 
 export function Header() {
@@ -96,7 +95,6 @@ export function Header() {
 
           {/* User Actions - Far Right */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0 h-10 md:h-12">
-            <ThemeToggle />
             <LanguageSwitcher />
 
             {/* Show loader while initializing session */}
@@ -107,7 +105,7 @@ export function Header() {
             ) : user ? (
               <DropdownMenu dir={isRTL ? "rtl" : "ltr"}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-xl md:rounded-2xl hover:bg-primary/10 transition-colors relative overflow-hidden w-8 h-8 md:w-10 md:h-10">
+                  <Button variant="ghost" size="icon" className="lg:hidden rounded-xl md:rounded-2xl hover:bg-primary/10 transition-colors relative overflow-hidden w-8 h-8 md:w-10 md:h-10">
                     {profile?.avatar_url ? (
                       <img
                         src={profile.avatar_url}
@@ -185,6 +183,36 @@ export function Header() {
                   <EditableText contentKey={link.key} fallback={t(link.key)} />
                 </Link>
               ))}
+
+              {user && (
+                <>
+                  <div className="h-px bg-white/5 my-2" />
+                  <Link
+                    to="/profile"
+                    className="text-lg font-sans font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors flex items-center gap-3"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <User className="w-5 h-5 text-primary" />
+                    <span>{t('nav.profile')}</span>
+                  </Link>
+                  <Link
+                    to="/favorites"
+                    className="text-lg font-sans font-bold px-4 py-2 rounded-xl hover:bg-primary/10 transition-colors flex items-center gap-3"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Heart className="w-5 h-5 text-rose-500" />
+                    <span>{t('nav.favorites')}</span>
+                  </Link>
+                  <button
+                    onClick={() => { handleLogout(); setIsMenuOpen(false); }}
+                    className="text-lg font-sans font-bold px-4 py-2 rounded-xl hover:bg-destructive/10 text-destructive transition-colors flex items-center gap-3 text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span>{t('nav.signout')}</span>
+                  </button>
+                </>
+              )}
+
               {!user && (
                 <div className="px-4 pt-6 border-t border-white/5">
                   <Button asChild className="w-full pill-button bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors">
