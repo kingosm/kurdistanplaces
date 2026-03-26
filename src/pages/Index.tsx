@@ -55,49 +55,30 @@ const Index = () => {
   const sections: Record<string, JSX.Element> = {
     hero: (
       <SortableSection key="hero" id="hero">
-        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-          <div className="absolute inset-0 z-0">
+        <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 z-0 bg-black">
             <EditableImage
               contentKey="hero.image"
-              fallback="https://images.unsplash.com/photo-1623864190822-487053e1673b?w=1280"
+              fallback="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80"
               alt="Hero background"
-              className="w-full h-full opacity-40 scale-105"
+              className="w-full h-full object-cover opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+            {/* Soft gradient to ensure text readability */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/30 to-black/60" />
           </div>
 
-          <div className="container mx-auto px-6 relative z-10">
-            <div className="max-w-5xl mx-auto text-center">
-              <div className="mb-12">
-                <EditableBlock id="hero_badge" page="index">
-                  <span className="place-badge mx-auto block mb-6">
-                    <EditableText contentKey="hero.badge" fallback={t('hero.badge')} />
-                  </span>
-                </EditableBlock>
-                <EditableBlock id="hero_title" page="index">
-                  <h1 className="text-6xl md:text-9xl font-black tracking-tighter mb-8 leading-[1.1] md:leading-[1.1] pt-4 pb-4">
-                    <EditableText contentKey="hero.title" fallback={t('hero.title')} as="span" />
-                  </h1>
-                </EditableBlock>
-                <EditableBlock id="hero_desc" page="index">
-                  <p className="text-lg md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed pt-2">
-                    <EditableText contentKey="hero.desc.premium" fallback={t('hero.desc.premium')} as="span" />
-                  </p>
-                </EditableBlock>
-              </div>
-
-              <EditableBlock id="hero_stats" page="index">
-                <div className="pt-8 flex justify-center gap-12 text-sm font-bold uppercase tracking-widest text-muted-foreground">
-                  <div className="flex flex-col gap-1 items-center">
-                    <span className="text-foreground text-3xl font-black">{formatCount(stats.places)}+</span>
-                    <span><EditableText contentKey="hero.collections" fallback={t('hero.collections')} /></span>
-                  </div>
-                  <div className="w-px h-12 bg-white/10" />
-                  <div className="flex flex-col gap-1 items-center">
-                    <span className="text-foreground text-3xl font-black">{formatCount(stats.community)}+</span>
-                    <span><EditableText contentKey="hero.stats.diners" fallback={t('hero.stats.diners')} /></span>
-                  </div>
-                </div>
+          <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center pt-20">
+            <div className="max-w-4xl mx-auto">
+              <EditableBlock id="hero_title" page="index">
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white drop-shadow-2xl">
+                  Discover the Best Restaurants & Markets in Kurdistan
+                </h1>
+              </EditableBlock>
+              
+              <EditableBlock id="hero_btn" page="index">
+                <Button size="lg" asChild className="rounded-full bg-primary hover:bg-primary/90 text-white font-bold px-10 py-7 text-lg shadow-xl shadow-primary/30 transition-all hover:scale-105 mt-4">
+                  <Link to="/categories">Explore Now</Link>
+                </Button>
               </EditableBlock>
             </div>
           </div>

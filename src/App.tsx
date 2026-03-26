@@ -10,6 +10,7 @@ import { EditModeProvider } from "./contexts/EditModeContext";
 import { LayoutEditorProvider } from "./contexts/LayoutEditorContext";
 import { AdminToolbar } from "./components/cms/AdminToolbar";
 import ScrollToTop from "./components/ScrollToTop";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 // Lazy load pages for performance
 const Index = lazy(() => import("./pages/Index"));
@@ -24,6 +25,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,8 +38,9 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+  <ThemeProvider defaultTheme="light" storageKey="kurdtrip-theme">
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
       <LanguageProvider>
         <UserProvider>
           <EditModeProvider>
@@ -58,6 +61,7 @@ const App = () => (
                     <Route path="/favorites" element={<FavoritesPage />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/search" element={<SearchPage />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="*" element={<NotFound />} />
@@ -68,8 +72,9 @@ const App = () => (
           </EditModeProvider>
         </UserProvider>
       </LanguageProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;

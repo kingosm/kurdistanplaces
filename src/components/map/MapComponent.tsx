@@ -47,6 +47,7 @@ const createCustomIcon = (color: string) => {
 };
 
 const restaurantIcon = createCustomIcon('#ea384c'); // Loop/Primary Color
+const activeIcon = createCustomIcon('#000000'); // Bold black for hover/active highlighting
 const userIcon = createCustomIcon('#3b82f6'); // Blue for user
 
 interface MapComponentProps {
@@ -55,6 +56,7 @@ interface MapComponentProps {
     className?: string;
     centerOn?: [number, number] | null;
     defaultZoom?: number;
+    hoveredRestaurantId?: string | null;
 }
 
 // Map Updater Component to handle view changes
@@ -70,7 +72,7 @@ const MapUpdater = ({ center, zoom, bounds }: { center: [number, number], zoom: 
     return null;
 };
 
-export const MapComponent = ({ restaurants, userLocation, className, centerOn, defaultZoom }: MapComponentProps) => {
+export const MapComponent = ({ restaurants, userLocation, className, centerOn, defaultZoom, hoveredRestaurantId }: MapComponentProps) => {
     const defaultCenter: [number, number] = [36.1911, 44.0091]; // Erbil Default
 
     // Priority: centerOn > userLocation > defaultCenter
@@ -205,7 +207,8 @@ export const MapComponent = ({ restaurants, userLocation, className, centerOn, d
                         <Marker
                             key={restaurant.id}
                             position={[restaurant.latitude, restaurant.longitude]}
-                            icon={restaurantIcon}
+                            icon={restaurant.id === hoveredRestaurantId ? activeIcon : restaurantIcon}
+                            zIndexOffset={restaurant.id === hoveredRestaurantId ? 1000 : 0}
                         >
                             <Popup>
                                 <div className="space-y-2 min-w-[200px]">

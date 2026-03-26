@@ -6,27 +6,55 @@
 
 @layer base {
   :root {
-    --background: 222 47% 7%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 7%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 239 84% 67%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 222 47% 12%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 12%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 239 84% 67%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 47% 15%;
-    --input: 222 47% 15%;
-    --ring: 239 84% 67%;
-    --radius: 1rem;
-    --gold: 43 100% 50%;
+    /* Main Airbnb Light Theme */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+    
+    /* Vibrant Accent (Electric Blue/Indigo) */
+    --primary: 236 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Soft grays for outlines */
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 236 100% 65%;
+    
+    --radius: 1rem; /* Softer, native feel */
+  }
+
+  .dark {
+    /* Premium Dark Theme */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 236 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 64%;
+    --accent: 236 100% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 236 100% 65%;
   }
 }
 
@@ -36,8 +64,9 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-500;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground tracking-tight transition-colors duration-500 font-sans antialiased text-base;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1,
@@ -46,11 +75,11 @@
   h4,
   h5,
   h6 {
-    font-family: 'Outfit', sans-serif;
+    @apply font-display tracking-tight text-foreground;
   }
 
   .serif-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Playfair Display', serif;
   }
 
   @font-face {
@@ -71,7 +100,6 @@
     font-family: 'NRT-Reg', 'Tahoma', 'Arial', sans-serif;
     line-height: 2 !important;
     letter-spacing: normal !important;
-    /* Fix for interrupted/disconnected words */
   }
 
   [dir="rtl"] h1,
@@ -119,19 +147,16 @@
       hyphens: auto;
     }
 
-    /* Better line heights for readability */
     body {
       line-height: 1.6;
       padding-left: max(0px, env(safe-area-inset-left));
       padding-right: max(0px, env(safe-area-inset-right));
     }
 
-    /* Better spacing between flex items */
     .flex {
       gap: 0.5rem;
     }
 
-    /* Ensure text doesn't overflow containers */
     div,
     section,
     article,
@@ -140,7 +165,6 @@
       word-break: break-word;
     }
 
-    /* Fix for long words in all languages */
     span,
     a,
     button,
@@ -149,7 +173,6 @@
       overflow-wrap: anywhere;
     }
 
-    /* Better spacing for inline elements */
     span+span {
       margin-left: 0.25rem;
     }
@@ -159,20 +182,23 @@
       margin-right: 0.25rem;
     }
   }
-
 }
 
 @layer components {
+  /* Premium button styling */
   .hero-gradient {
-    @apply bg-gradient-to-br from-[#6366f1] via-[#818cf8] to-[#4f46e5] text-white;
+    @apply bg-gradient-to-r from-primary via-[#818cf8] to-primary bg-[length:200%_auto] text-white hover:bg-right font-medium transition-all duration-500;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
   }
 
+  /* High-end glass effect */
   .glass-card {
-    @apply bg-secondary/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-[2rem];
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
   }
 
   .modern-shadow {
-    @apply shadow-modern;
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5);
   }
 
   .animate-reveal {
@@ -182,53 +208,57 @@
   @keyframes reveal {
     from {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(40px);
     }
-
     to {
       opacity: 1;
       transform: translateY(0);
     }
   }
 
+  /* Sleek interactive cards */
   .modern-card {
-    @apply relative overflow-hidden rounded-3xl border border-white/5 bg-secondary/20 transition-all duration-500 hover:border-primary/30 hover:shadow-primary/10 hover:shadow-2xl hover:-translate-y-2;
+    @apply relative overflow-hidden rounded-[2rem] border border-white/5 bg-gradient-to-b from-white/[0.05] to-transparent transition-all duration-700 hover:border-white/20 hover:-translate-y-2;
+  }
+  
+  .modern-card:hover {
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
   }
 
+  /* Refined pill buttons */
   .pill-button {
-    @apply rounded-full px-10 py-5 font-bold uppercase tracking-wider text-[11px] transition-all shadow-lg hover:shadow-primary/20;
+    @apply rounded-full px-8 py-4 font-bold uppercase tracking-[0.15em] text-xs transition-all duration-300;
   }
 
   /* Modern Place Utilities */
   .place-grid-item {
-    @apply flex flex-col gap-6 p-6 modern-card;
+    @apply flex flex-col p-6 modern-card;
   }
 
   .place-badge {
-    @apply px-4 py-1.5 rounded-full bg-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.2em] w-fit;
+    @apply px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.3em] w-fit shadow-lg;
   }
 
   .gourmet-border {
-    @apply border border-white/10 rounded-2xl relative overflow-hidden transition-all duration-500;
+    @apply border border-white/10 rounded-[2rem] relative overflow-hidden transition-all duration-700 hover:border-white/30;
   }
-
+  
   .gourmet-border:hover {
-    @apply border-primary/50 shadow-gourmet;
+     box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05);
   }
 
   .menu-list-item {
-    @apply flex items-center gap-4 p-4 rounded-2xl bg-secondary/20 border border-white/5 transition-all hover:bg-secondary/40 hover:border-primary/20;
+    @apply flex items-center gap-4 p-5 rounded-3xl bg-white/[0.02] border border-white/5 transition-all duration-500 hover:bg-white/[0.05] hover:border-white/10 hover:-translate-x-1;
   }
 
   .menu-dots {
-    @apply flex-1 border-b border-white/5 border-dashed;
+    @apply flex-1 border-b border-white/10 border-dashed opacity-50;
   }
 
   .menu-price {
-    @apply font-bold text-primary;
+    @apply font-bold text-lg text-primary;
   }
 }
-
 @keyframes float {
 
   0%,
@@ -396,12 +426,6 @@
   html,
   body {
     @apply overflow-x-hidden w-full;
-  }
-
-  /* Better mobile shadows (less intense) */
-  .shadow-2xl,
-  .shadow-3xl {
-    @apply shadow-lg;
   }
 
   /* Responsive padding for hero sections */

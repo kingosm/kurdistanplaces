@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { Star, MapPin, Navigation, Pencil } from "lucide-react";
+import { Star, Heart, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEditMode } from "@/contexts/EditModeContext";
+import { useState } from "react";
 
 interface RestaurantCardProps {
   id: string;
@@ -13,6 +14,9 @@ interface RestaurantCardProps {
   rating?: number;
   reviewCount?: number;
   distance?: number;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  isActive?: boolean;
 }
 
 export function RestaurantCard({
@@ -23,76 +27,72 @@ export function RestaurantCard({
   rating = 0,
   reviewCount = 0,
   distance,
+  onMouseEnter,
+  onMouseLeave,
+  isActive
 }: RestaurantCardProps) {
   const { isEditMode } = useEditMode();
+  const [isFavorite, setIsFavorite] = useState(false);
+
   return (
     <Link
       to={`/restaurant/${slug}`}
-      className="group relative block h-[28rem] rounded-[2.5rem] overflow-hidden"
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={cn(
+        "group flex flex-col gap-3 cursor-pointer transition-all duration-300",
+        isActive && "scale-[1.02]"
+      )}
     >
-      {/* Background Image with Zoom Effect */}
-      <div className="absolute inset-0 bg-secondary">
+      <div className={cn(
+        "relative w-full aspect-[1/1] overflow-hidden rounded-[1.5rem] bg-secondary",
+        isActive && "shadow-[0_0_0_2px_hsl(var(--primary))]"
+      )}>
         <img
           src={imageUrl || "/placeholder.svg"}
           alt={name}
-          className="w-full h-full object-cover transition-transform duration-[1.5s] ease-out"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-90" />
-      </div>
+        
+        {/* Favorite Button */}
+        <button 
+          onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
+          className="absolute top-4 right-4 z-10 transition-transform active:scale-90"
+        >
+          <Heart className={cn(
+            "w-7 h-7 drop-shadow-md transition-colors",
+            isFavorite ? "fill-[#ff385c] text-[#ff385c]" : "fill-black/30 text-white hover:fill-black/50"
+          )} />
+        </button>
 
-      {/* Floating Badges */}
-      <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
-        {distance !== undefined && (
-          <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
-            <Navigation className="w-3 h-3 text-primary" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">
-              {distance.toFixed(1)} km
-            </span>
-          </div>
-        )}
-
-        <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-1.5 shadow-lg">
-          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-          <span className="text-xs font-black tracking-tight text-white">
-            {rating > 0 ? rating.toFixed(1) : "NEW"}
-          </span>
-        </div>
-
-        {/* Edit in Admin badge — only visible in edit mode */}
         {isEditMode && (
-          <Link
-            to="/admin"
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1.5 bg-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg hover:bg-amber-400 transition-colors"
-          >
-            <Pencil className="w-3 h-3" />
-            Edit in Admin
-          </Link>
+          <div className="absolute top-4 left-4 z-10">
+            <span className="flex items-center gap-1.5 bg-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+              <Pencil className="w-3 h-3" />
+              Edit
+            </span>
+          </div>
         )}
       </div>
 
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-8 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-        <div className="space-y-3">
-          <h3 className="text-3xl font-black tracking-tighter text-white leading-tight group-hover:text-primary transition-colors">
-            {name}
-          </h3>
-
-          <div className="flex items-center gap-2 text-gray-300">
-            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-            <span className="text-xs font-bold truncate tracking-wide uppercase">{address || "Hidden Gem"}</span>
+      <div className="flex flex-col gap-0.5 px-1">
+        <div className="flex justify-between items-start gap-2">
+          <h3 className="text-base font-semibold truncate text-foreground">{name}</h3>
+          <div className="flex items-center gap-1 shrink-0">
+            <Star className="w-3.5 h-3.5 fill-foreground text-foreground" />
+            <span className="text-sm font-medium">{rating > 0 ? rating.toFixed(2) : "New"}</span>
           </div>
-
-          <div className="w-full h-px bg-white/10 my-4" />
-
-          <div className="flex items-center justify-between opacity-80 group-hover:opacity-100 transition-opacity">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-              {reviewCount} Reviews
-            </span>
-            <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest group-hover:translate-x-2 transition-transform">
-              Explore <Navigation className="w-3 h-3" />
-            </div>
-          </div>
+        </div>
+        
+        <span className="text-sm text-muted-foreground truncate">{address || "Surprise location"}</span>
+        
+        {distance !== undefined && (
+          <span className="text-sm text-muted-foreground">{distance.toFixed(1)} km away</span>
+        )}
+        
+        <div className="mt-1 flex items-center">
+          <span className="text-sm font-semibold text-foreground underline decoration-1 underline-offset-4">View Details</span>
+          <span className="text-sm text-muted-foreground ml-1">· {reviewCount} reviews</span>
         </div>
       </div>
     </Link>

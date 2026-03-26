@@ -62,7 +62,7 @@ export function ImageUpload({
                                 variant="secondary"
                                 size="sm"
                                 onClick={handleClick}
-                                className="shadow-elevated"
+                                className="shadow-md"
                             >
                                 <Upload className="h-4 w-4 mr-2" />
                                 Change
@@ -75,7 +75,7 @@ export function ImageUpload({
                                     e.stopPropagation();
                                     onRemove();
                                 }}
-                                className="shadow-elevated"
+                                className="shadow-md"
                             >
                                 <X className="h-4 w-4 mr-2" />
                                 Remove

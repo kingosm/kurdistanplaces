@@ -19,13 +19,18 @@ export const Footer = () => {
           <EditableBlock id="footer_brand" page="__global__">
             <div className="space-y-6">
               <Link to="/" className="inline-block group">
-                <div className="flex flex-col">
-                  <span className="text-3xl font-black tracking-tighter text-foreground">
-                    KURDISTAN<span className="text-primary">PLACES</span>
-                  </span>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 group-hover:scale-105 shrink-0 -ml-2">
+                    <img src="/images/logo.png" alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-4xl font-black tracking-tighter flex items-center leading-tight">
+                      <span className="text-white">Kurd</span><span className="text-blue-500">Trip</span>
+                    </span>
                   <span className="text-[10px] uppercase tracking-[0.4em] font-black text-primary opacity-70">
                     <EditableText contentKey="footer.global_discovery" fallback={t('footer.global_discovery')} />
                   </span>
+                  </div>
                 </div>
               </Link>
               <p className="text-muted-foreground leading-relaxed max-w-sm font-medium">
@@ -75,7 +80,7 @@ export const Footer = () => {
                 <EditableText contentKey="footer.contact.title" fallback={t('footer.contact.title')} />
               </h4>
               <div className="space-y-6">
-                <a href="mailto:hello@kurdistanplaces.com" className="flex items-center gap-4 group">
+                <a href="mailto:hello@kurdtrip.com" className="flex items-center gap-4 group">
                   <div className="w-10 h-10 rounded-xl bg-secondary/50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     <Mail className="w-5 h-5" />
                   </div>
@@ -84,7 +89,7 @@ export const Footer = () => {
                       <EditableText contentKey="footer.contact.email" fallback={t('footer.contact.email')} />
                     </span>
                     <span className="text-foreground font-bold group-hover:text-primary transition-colors">
-                      <EditableText contentKey="footer.email_value" fallback="hello@kurdistanplaces.com" />
+                      <EditableText contentKey="footer.email_value" fallback="hello@kurdtrip.com" />
                     </span>
                   </div>
                 </a>

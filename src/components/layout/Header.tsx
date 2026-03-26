@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MapPin, User, Menu, X, LogOut, Heart, Settings } from "lucide-react";
+import { MapPin, User, Menu, X, LogOut, Heart, Settings, Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { EditableText } from "@/components/cms/EditableText";
 import { EditableBlock } from "@/components/cms/EditableBlock";
 import { SortableNavLinks } from "@/components/cms/SortableNavLinks";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export function Header() {
   const { t, isRTL } = useLanguage();
@@ -58,39 +59,40 @@ export function Header() {
       {/* Force LTR container to keep logo left and buttons right regardless of language */}
       <div className="container mx-auto px-4 md:px-8" dir="ltr">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo Icon - Far Left */}
-          <EditableBlock id="header_logo" page="__global__">
-            <div className="flex items-center">
-              <Link
-                to="/"
-                className="w-11 h-11 md:w-14 md:h-14 bg-primary flex items-center justify-center rounded-xl md:rounded-2xl shadow-lg shadow-primary/20 transition-all duration-500 hover:scale-105 shrink-0"
-              >
-                <MapPin className="w-6 h-6 md:w-7 md:h-7 text-white" />
-              </Link>
+          {/* Logo & Brand Name - Left */}
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center transition-all duration-500 hover:scale-105 shrink-0"
+            >
+              <img src="/images/logo.png" alt="KurdTrip Logo" className="w-full h-full object-contain drop-shadow-md" />
+            </Link>
+            <Link to="/" className="hidden lg:block group shrink-0">
+              <h1 className="text-3xl font-display font-black tracking-tighter transition-colors flex items-center leading-tight">
+                <span className="text-foreground">Kurd</span>
+                <span className="text-primary">Trip</span>
+              </h1>
+            </Link>
+          </div>
+
+          {/* Centered Search Bar (Airbnb Style) */}
+          <div className="hidden md:flex flex-1 max-w-sm lg:max-w-md mx-auto items-center px-4">
+            <div 
+              onClick={() => navigate('/search')}
+              className="flex items-center w-full bg-background border border-border rounded-full pl-6 pr-2 py-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer dark:bg-card"
+            >
+              <span className="text-sm font-medium text-muted-foreground flex-1 truncate">
+                Search restaurants & markets
+              </span>
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground ml-2">
+                <Search className="w-4 h-4" />
+              </div>
             </div>
-          </EditableBlock>
-
-          {/* Centered Word & Desktop Nav */}
-          {/* Centered Word & Desktop Nav */}
-          <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-12 py-1">
-            <EditableBlock id="header_nav" page="__global__">
-              <Link to="/" className="group shrink-0">
-                <h1 className="text-xl md:text-3xl font-display font-black tracking-tighter text-foreground transition-colors group-hover:text-primary flex items-center leading-tight">
-                  <EditableText contentKey="header.logo.main" fallback="KURDISTAN" className="inline" /><span className="text-primary"><EditableText contentKey="header.logo.accent" fallback="PLACES" className="inline" /></span>
-                </h1>
-              </Link>
-            </EditableBlock>
-
-            {/* Desktop Navigation — drag to reorder in Layout Edit mode */}
-            <EditableBlock id="header_links" page="__global__">
-              <nav className="hidden lg:flex items-center gap-4 md:gap-8 lg:gap-12">
-                <SortableNavLinks />
-              </nav>
-            </EditableBlock>
           </div>
 
           {/* User Actions - Far Right */}
           <div className="flex items-center gap-2 md:gap-4 shrink-0">
+            <ThemeToggle />
             <LanguageSwitcher />
 
             {/* Show loader while initializing session */}

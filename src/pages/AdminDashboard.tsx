@@ -386,7 +386,7 @@ const AdminDashboard = () => {
         <Layout>
             <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <h1 className="text-4xl font-black mb-8 tracking-tighter">KURDISTAN<span className="text-primary italic">PLACES</span> ADMIN</h1>
+                    <h1 className="text-4xl font-black mb-8 tracking-tighter"><span className="text-white">Kurd</span><span className="text-blue-500 italic">Trip</span> ADMIN</h1>
 
                     <Tabs defaultValue="categories" className="w-full">
                         <TabsList className="mb-8">
