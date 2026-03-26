@@ -17,24 +17,21 @@ const DEFAULT_ORDER = ["hero", "cta"];
 const mockAds: Ad[] = [
   {
     id: "ad-1",
-    type: "video",
-    url: "https://www.w3schools.com/html/mov_bbb.mp4",
-    targetUrl: "https://example.com/promo1",
-    alt: "Video Advertisement"
+    type: "image",
+    url: "https://images.unsplash.com/photo-1590490359854-dfba19688d70?auto=format&fit=crop&w=1600&q=80",
+    alt: "Authentic Kurdish Cuisine"
   },
   {
     id: "ad-2",
     type: "image",
-    url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1600&q=80",
-    targetUrl: "https://example.com/promo2",
-    alt: "Partner Promotion"
+    url: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1600&q=80",
+    alt: "Breathtaking Nature"
   },
   {
     id: "ad-3",
     type: "image",
-    url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1600&q=80",
-    targetUrl: "https://example.com/promo3",
-    alt: "Erbil Markets Ad"
+    url: "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&w=1600&q=80",
+    alt: "Modern Erbil Infrastructure"
   }
 ];
 
@@ -89,19 +86,18 @@ const Index = () => {
               alt="Hero background"
               className="w-full h-full object-cover opacity-60"
             />
-            {/* Soft gradient to ensure text readability */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/30 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-black/40" />
           </div>
 
-          <div className="w-full max-w-6xl mt-1 md:mt-24 px-0 md:px-4 relative z-10">
+          <div className="w-full max-w-6xl mt-4 md:mt-20 px-0 md:px-6 relative z-10 transition-all duration-700">
             <AdSlider ads={mockAds} />
           </div>
 
           <div className="flex-1 container mx-auto px-4 relative z-10 flex flex-col items-center justify-center text-center">
             <div className="max-w-4xl mx-auto">
               <EditableBlock id="hero_title" page="index">
-                <h1 className="text-3xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-8 leading-[1.1] text-white drop-shadow-2xl hyphens-none">
-                  Discover the Best Restaurants & Markets in Kurdistan
+                <h1 className="text-4xl md:text-7xl lg:text-8xl font-black tracking-tighter mb-10 leading-[0.95] text-white drop-shadow-2xl hyphens-none">
+                  Discover the Best <br className="hidden md:block" /> Restaurants & Markets
                 </h1>
               </EditableBlock>
               
@@ -117,9 +113,9 @@ const Index = () => {
     ),
     cta: (
       <SortableSection key="cta" id="cta">
-        <section className="py-24 relative overflow-hidden bg-secondary/20">
+        <section className="py-28 relative overflow-hidden bg-secondary/20">
           <div className="container mx-auto px-6 text-center">
-            <div className="max-w-4xl mx-auto space-y-8 relative z-10">
+            <div className="max-w-4xl mx-auto space-y-10 relative z-10">
               <h2 className="text-5xl md:text-7xl font-black tracking-tighter leading-none rtl:leading-[1.4]">
                 <EditableText contentKey="index.cta.title.premium" fallback={t('index.cta.title.premium')} as="span" />
               </h2>

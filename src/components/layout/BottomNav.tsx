@@ -26,12 +26,12 @@ export function BottomNav() {
             <Link
               key={idx}
               to={item.path}
-              className={`flex flex-col items-center gap-1 p-2 transition-colors ${
-                isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+              className={`flex flex-col items-center gap-1.5 p-2 px-3 rounded-2xl transition-all duration-300 ${
+                isActive ? "text-primary bg-primary/5" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <item.icon className={`w-5 h-5 ${isActive ? "fill-primary/20 text-primary" : ""}`} />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <item.icon className={`w-6 h-6 transition-transform duration-300 ${isActive ? "fill-primary/20 scale-110" : "scale-100"}`} />
+              <span className={`text-[11px] font-bold tracking-tight ${isActive ? "opacity-100" : "opacity-70"}`}>{item.label}</span>
             </Link>
           );
         })}
