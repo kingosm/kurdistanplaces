@@ -93,7 +93,7 @@ export const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
             <div className="flex">
             {ads.map((ad, idx) => (
                 <div 
-                className="flex-[0_0_100%] min-w-0 relative aspect-[16/11] md:aspect-[21/6] lg:aspect-[24/5] bg-black/60 flex items-center justify-center overflow-hidden backdrop-blur-md"
+                className="flex-[0_0_100%] min-w-0 relative aspect-[16/11] md:aspect-[21/6] lg:aspect-[16/4] bg-black/60 flex items-center justify-center overflow-hidden backdrop-blur-md"
                 key={ad.id}
                 >
                 {/* Visual loading fallback skeleton underneath */}

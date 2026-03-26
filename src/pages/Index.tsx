@@ -100,7 +100,7 @@ const Index = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
           </div>
 
-          <div className="w-full max-w-6xl mt-0 pt-0 px-0 md:px-6 relative z-10 transition-all duration-700">
+          <div className="w-full max-w-6xl mt-0 pt-0 md:pt-28 px-0 md:px-6 relative z-10 transition-all duration-700">
             {ads.length > 0 && <AdSlider ads={ads} />}
           </div>
 
