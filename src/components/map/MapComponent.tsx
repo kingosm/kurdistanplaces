@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,19 @@ const createCustomIcon = (color: string) => {
 const restaurantIcon = createCustomIcon('#ea384c'); // Loop/Primary Color
 const activeIcon = createCustomIcon('#000000'); // Bold black for hover/active highlighting
 const userIcon = createCustomIcon('#3b82f6'); // Blue for user
+
+// Custom Cluster Icon Function
+const createClusterCustomIcon = (cluster: any) => {
+    const count = cluster.getChildCount();
+    // Use tailwind classes in the HTML logic mapped to Kurdtrip branding
+    return L.divIcon({
+        html: `<div style="background-color: #ea384c; color: white; display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; border-radius: 50%; font-weight: bold; font-family: sans-serif; border: 3px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.2); font-size: 14px;">
+                ${count}
+               </div>`,
+        className: 'custom-cluster-icon bg-transparent',
+        iconSize: L.point(40, 40, true),
+    });
+};
 
 interface MapComponentProps {
     restaurants: Restaurant[];
@@ -200,38 +214,46 @@ export const MapComponent = ({ restaurants, userLocation, className, centerOn, d
                     </Marker>
                 )}
 
-                {/* Restaurant Markers */}
-                {restaurants.map((restaurant) => {
-                    if (!restaurant.latitude || !restaurant.longitude) return null;
-                    return (
-                        <Marker
-                            key={restaurant.id}
-                            position={[restaurant.latitude, restaurant.longitude]}
-                            icon={restaurant.id === hoveredRestaurantId ? activeIcon : restaurantIcon}
-                            zIndexOffset={restaurant.id === hoveredRestaurantId ? 1000 : 0}
-                        >
-                            <Popup>
-                                <div className="space-y-2 min-w-[200px]">
-                                    {restaurant.image_url && (
-                                        <div className="w-full h-24 rounded-lg overflow-hidden mb-2">
-                                            <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />
+                {/* Restaurant Markers wrapped in Cluster Group */}
+                <MarkerClusterGroup
+                    chunkedLoading
+                    iconCreateFunction={createClusterCustomIcon}
+                    showCoverageOnHover={false}
+                    maxClusterRadius={50}
+                    spiderfyOnMaxZoom={true}
+                >
+                    {restaurants.map((restaurant) => {
+                        if (!restaurant.latitude || !restaurant.longitude) return null;
+                        return (
+                            <Marker
+                                key={restaurant.id}
+                                position={[restaurant.latitude, restaurant.longitude]}
+                                icon={restaurant.id === hoveredRestaurantId ? activeIcon : restaurantIcon}
+                                zIndexOffset={restaurant.id === hoveredRestaurantId ? 1000 : 0}
+                            >
+                                <Popup>
+                                    <div className="space-y-2 min-w-[200px]">
+                                        {restaurant.image_url && (
+                                            <div className="w-full h-24 rounded-lg overflow-hidden mb-2">
+                                                <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />
+                                            </div>
+                                        )}
+                                        <h3 className="font-black text-lg">{restaurant.name}</h3>
+                                        <p className="text-muted-foreground text-xs line-clamp-2">{restaurant.description}</p>
+                                        <div className="flex justify-between items-center pt-2">
+                                            <span className="text-xs font-bold text-primary">
+                                                {restaurant.avg_rating ? `★ ${restaurant.avg_rating.toFixed(1)}` : 'New'}
+                                            </span>
+                                            <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => window.location.href = `/restaurant/${restaurant.slug}`}>
+                                                View
+                                            </Button>
                                         </div>
-                                    )}
-                                    <h3 className="font-black text-lg">{restaurant.name}</h3>
-                                    <p className="text-muted-foreground text-xs line-clamp-2">{restaurant.description}</p>
-                                    <div className="flex justify-between items-center pt-2">
-                                        <span className="text-xs font-bold text-primary">
-                                            {restaurant.avg_rating ? `★ ${restaurant.avg_rating.toFixed(1)}` : 'New'}
-                                        </span>
-                                        <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => window.location.href = `/restaurant/${restaurant.slug}`}>
-                                            View
-                                        </Button>
                                     </div>
-                                </div>
-                            </Popup>
-                        </Marker>
-                    );
-                })}
+                                </Popup>
+                            </Marker>
+                        );
+                    })}
+                </MarkerClusterGroup>
             </MapContainer>
 
             {/* Trip Info Overlay Card */}

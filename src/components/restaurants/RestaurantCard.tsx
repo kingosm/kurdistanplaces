@@ -62,6 +62,7 @@ export function RestaurantCard({
         <img
           src={finalImage || "/placeholder.svg"}
           alt={name}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         
