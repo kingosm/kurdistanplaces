@@ -56,7 +56,7 @@ export function RestaurantCard({
       )}
     >
       <div className={cn(
-        "relative w-full aspect-[4/3] overflow-hidden rounded-2xl bg-secondary shadow-sm",
+        "relative w-full aspect-square overflow-hidden rounded-xl bg-secondary shadow-sm",
         isActive && "shadow-[0_0_0_2px_hsl(var(--primary))]"
       )}>
         <img
@@ -67,18 +67,18 @@ export function RestaurantCard({
         />
         
         {/* Rating Floating Chip */}
-        <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-black/50 backdrop-blur-md px-2 py-1 rounded-lg border border-white/10">
-          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-          <span className="text-[11px] font-bold text-white">{finalRating > 0 ? finalRating.toFixed(1) : "New"}</span>
+        <div className="absolute top-2 left-2 z-10 flex items-center gap-0.5 bg-black/50 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/10 shrink-0">
+          <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+          <span className="text-[9px] font-bold text-white leading-none">{finalRating > 0 ? finalRating.toFixed(1) : "N"}</span>
         </div>
 
         {/* Favorite Button */}
         <button 
           onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
-          className="absolute top-3 right-3 z-10 transition-transform active:scale-90"
+          className="absolute top-2 right-2 z-10 transition-transform active:scale-90"
         >
           <Heart className={cn(
-            "w-6 h-6 drop-shadow-md transition-colors",
+            "w-4 h-4 drop-shadow-md transition-colors",
             isFavorite ? "fill-[#ff385c] text-[#ff385c]" : "fill-black/30 text-white hover:fill-black/50"
           )} />
         </button>
@@ -93,12 +93,10 @@ export function RestaurantCard({
         )}
       </div>
 
-      <div className="flex flex-col gap-1 px-1 py-1">
-        <div className="flex justify-between items-start gap-1">
-          <h3 className="text-sm font-bold truncate text-foreground leading-tight">{name}</h3>
-        </div>
+      <div className="flex flex-col gap-0.5 px-0.5 py-1">
+        <h3 className="text-[11px] sm:text-sm font-bold truncate text-foreground leading-tight">{name}</h3>
         
-        <div className="flex flex-col gap-0.5">
+        <div className="hidden sm:flex flex-col gap-0.5">
           <span className="text-[12px] text-muted-foreground truncate opacity-80">{address || "Surprise location"}</span>
           
           <div className="flex items-center text-[12px] text-muted-foreground font-medium">
