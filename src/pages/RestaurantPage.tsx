@@ -545,7 +545,7 @@ const RestaurantPage = () => {
                         <p className="text-lg font-medium text-muted-foreground mb-8 max-w-sm">
                           {t('restaurant.signin_review')}
                         </p>
-                        <Button asChild className="pill-button hero-gradient px-10 h-14 text-white hover:scale-105 transition-all">
+                        <Button asChild className="pill-button bg-blue-600 hover:bg-blue-700 transition-colors px-10 h-14 font-bold text-white hover:scale-105">
                           <Link to="/auth">{t('nav.signin')}</Link>
                         </Button>
                       </div>

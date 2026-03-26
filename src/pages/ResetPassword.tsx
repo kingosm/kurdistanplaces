@@ -104,7 +104,7 @@ const ResetPassword = () => {
 
                             <Button
                                 type="submit"
-                                className="w-full pill-button hero-gradient h-16 text-lg text-white"
+                                className="w-full pill-button bg-blue-600 hover:bg-blue-700 transition-colors font-bold h-16 text-lg text-white"
                                 disabled={isLoading}
                             >
                                 {isLoading ? t('auth.btn.signing_in') : t('auth.update_password')}
