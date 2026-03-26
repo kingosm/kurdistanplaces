@@ -51,13 +51,13 @@ export function RestaurantCard({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       className={cn(
-        "group flex flex-col gap-3 cursor-pointer transition-all duration-300",
-        isActive && "scale-[1.02]"
+        "group flex flex-row items-center gap-3 p-2 cursor-pointer transition-all duration-300 border-b border-white/[0.03] hover:bg-white/[0.02]",
+        isActive && "bg-white/[0.05]"
       )}
     >
       <div className={cn(
-        "relative w-full aspect-square overflow-hidden rounded-xl bg-secondary shadow-sm",
-        isActive && "shadow-[0_0_0_2px_hsl(var(--primary))]"
+        "relative w-20 h-20 overflow-hidden rounded-xl bg-secondary shrink-0",
+        isActive && "ring-2 ring-primary ring-offset-2 ring-offset-background"
       )}>
         <img
           src={finalImage || "/placeholder.svg"}
@@ -65,23 +65,11 @@ export function RestaurantCard({
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
-        
-        {/* Rating Floating Chip */}
-        <div className="absolute top-2 left-2 z-10 flex items-center gap-0.5 bg-black/50 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/10 shrink-0">
+        {/* Rating Floating HUD on Image - Scaled down for Micro-Row */}
+        <div className="absolute bottom-1 right-1 z-10 flex items-center bg-black/60 backdrop-blur-sm px-1 rounded-md">
           <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-          <span className="text-[9px] font-bold text-white leading-none">{finalRating > 0 ? finalRating.toFixed(1) : "N"}</span>
+          <span className="text-[10px] font-black text-white ml-0.5">{finalRating > 0 ? finalRating.toFixed(1) : "N"}</span>
         </div>
-
-        {/* Favorite Button */}
-        <button 
-          onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
-          className="absolute top-2 right-2 z-10 transition-transform active:scale-90"
-        >
-          <Heart className={cn(
-            "w-4 h-4 drop-shadow-md transition-colors",
-            isFavorite ? "fill-[#ff385c] text-[#ff385c]" : "fill-black/30 text-white hover:fill-black/50"
-          )} />
-        </button>
 
         {isEditMode && (
           <div className="absolute top-4 left-4 z-10">
@@ -93,19 +81,32 @@ export function RestaurantCard({
         )}
       </div>
 
-      <div className="flex flex-col gap-0.5 px-0.5 py-1">
-        <h3 className="text-[11px] sm:text-sm font-bold truncate text-foreground leading-tight">{name}</h3>
+      <div className="flex-1 flex flex-col justify-center min-w-0 pr-4">
+        <h3 className="text-sm font-bold truncate text-foreground group-hover:text-primary transition-colors">{name}</h3>
         
-        <div className="hidden sm:flex flex-col gap-0.5">
-          <span className="text-[12px] text-muted-foreground truncate opacity-80">{address || "Surprise location"}</span>
+        <div className="flex flex-col">
+          <span className="text-[11px] text-muted-foreground truncate opacity-70 mb-0.5">{address || "Surprise location"}</span>
           
-          <div className="flex items-center text-[12px] text-muted-foreground font-medium">
+          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-semibold">
+             <span className="bg-primary/5 text-primary px-1.5 py-0.5 rounded uppercase tracking-tighter">Restaurant</span>
              {distance !== undefined && (
-               <span className="mr-1">{distance.toFixed(1)} km · </span>
+               <span>{distance.toFixed(1)} km · </span>
              )}
              <span>{finalReviews} reviews</span>
           </div>
         </div>
+      </div>
+
+      <div className="shrink-0 flex items-center pr-2">
+         <button 
+           onClick={(e) => { e.preventDefault(); setIsFavorite(!isFavorite); }}
+           className="transition-transform active:scale-90"
+         >
+           <Heart className={cn(
+             "w-5 h-5 transition-colors",
+             isFavorite ? "fill-[#ff385c] text-[#ff385c]" : "text-muted-foreground/30 hover:text-muted-foreground"
+           )} />
+         </button>
       </div>
     </Link>
   );

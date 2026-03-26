@@ -181,16 +181,19 @@ const SearchPage = () => {
             </div>
             
             {isLoading ? (
-              <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-6">
-                 {[1,2,3,4,5,6,7,8,9].map(i => (
-                   <div key={i} className="flex flex-col gap-1">
-                     <div className="aspect-square bg-secondary animate-pulse rounded-lg" />
-                     <div className="h-3 w-3/4 bg-secondary animate-pulse rounded opacity-50" />
+              <div className="flex flex-col gap-1">
+                 {[1,2,3,4,5,6,7,8].map(i => (
+                   <div key={i} className="flex items-center gap-3 p-2 bg-card/50 rounded-xl animate-pulse">
+                     <div className="w-20 h-20 bg-secondary rounded-lg shrink-0" />
+                     <div className="flex-1 space-y-2">
+                       <div className="h-4 w-1/2 bg-secondary rounded" />
+                       <div className="h-3 w-3/4 bg-secondary rounded opacity-50" />
+                     </div>
                    </div>
                  ))}
               </div>
             ) : filteredRestaurants.length > 0 ? (
-              <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 md:gap-6">
+              <div className="flex flex-col gap-1">
                 {filteredRestaurants.map(r => (
                   <RestaurantCard
                     key={r.id}
