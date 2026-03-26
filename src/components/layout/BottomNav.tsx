@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, MapPin, Heart, User } from "lucide-react";
+import { Home, Compass, Search, Heart, User } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useUser } from "@/contexts/UserContext";
 
@@ -11,7 +11,7 @@ export function BottomNav() {
   const NAV_ITEMS = [
     { icon: Home, label: t('nav.home'), path: "/" },
     { icon: Compass, label: t('nav.categories'), path: "/categories" },
-    { icon: MapPin, label: "Map", path: "/nearby" },
+    { icon: Search, label: "Search", path: "/search" },
     { icon: Heart, label: t('nav.favorites'), path: "/favorites", requiresAuth: true },
     { icon: User, label: t('nav.profile'), path: user ? "/profile" : "/auth" },
   ];
