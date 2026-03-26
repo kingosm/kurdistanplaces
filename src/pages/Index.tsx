@@ -85,11 +85,11 @@ const Index = () => {
               contentKey="hero.image"
               fallback="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80"
               alt="Hero background"
-              className="w-full h-full object-cover opacity-60"
+              className="w-full h-full object-cover opacity-80"
             />
             {/* Blinded Contrast Shield for Header */}
             <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-black/90 to-transparent opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-black/30" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
           </div>
 
           <div className="w-full max-w-6xl mt-0 pt-32 px-0 md:px-6 relative z-10 transition-all duration-700">
