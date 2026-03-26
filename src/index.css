@@ -236,7 +236,7 @@
   }
 
   .place-badge {
-    @apply px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.3em] w-fit shadow-lg;
+    @apply px-4 py-2 rounded-full bg-secondary/50 backdrop-blur-md border border-border/50 text-foreground text-[10px] font-black uppercase tracking-[0.3em] w-fit shadow-lg;
   }
 
   .gourmet-border {
