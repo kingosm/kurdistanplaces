@@ -60,7 +60,7 @@ export default {
       },
       boxShadow: {
         'modern': '0 20px 40px -15px rgba(0,0,0,0.5)',
-        'glow': '0 0 20px rgba(99, 102, 241, 0.3)',
+        'glow': '0 0 20px rgba(7, 164, 245, 0.3)',
         'premium': '0 10px 40px -10px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.05)',
       },
       keyframes: {
