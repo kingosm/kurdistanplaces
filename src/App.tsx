@@ -38,7 +38,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
-  <ThemeProvider defaultTheme="light" storageKey="kurdtrip-theme">
+  <ThemeProvider defaultTheme="dark" storageKey="kurdtrip-theme">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
       <LanguageProvider>
