@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth Debugger</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #111; color: #0f0; }
+        input { padding: 10px; margin: 5px; width: 300px; display: block; background: #222; border: 1px solid #444; color: white; }
+        button { padding: 10px 20px; cursor: pointer; background: #00f; color: white; border: none; font-weight: bold; margin-top: 10px; }
+        #log { margin-top: 20px; white-space: pre-wrap; word-break: break-all; border-top: 1px solid #444; padding-top: 20px; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+    </style>
+</head>
+<body>
+    <h1>Supabase Auth Debugger (Raw Mode)</h1>
+    <p>This page tests the connection completely outside the React app.</p>
+    
+    <div>
+        <label>Email: <input type="email" id="email" placeholder="admin@example.com"></label>
+        <label>Password: <input type="password" id="password" placeholder="password"></label>
+        <button onclick="testLogin()">Attempt Manual Login (Fetch)</button>
+    </div>
+
+    <div id="log">Logs will appear here...</div>
+
+    <script>
+        // CONFIG
+        const SUPABASE_URL = "https://vugyakqabzksrwvrxkof.supabase.co";
+        const KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1Z3lha3FhYnprc3J3dnJ4a29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk0MzE1MDQsImV4cCI6MjA4NTAwNzUwNH0.gydeQ9jiiBYQOjXf4FozDn1Acjv9ofxlpqnEzsojqtc";
+
+        function log(msg, type = 'info') {
+            const el = document.getElementById('log');
+            const line = document.createElement('div');
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type === 'error') line.style.color = '#f55';
+            if (type === 'success') line.style.color = '#5f5';
+            el.appendChild(line);
+            console.log(msg);
+        }
+
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                log("Please enter email and password", 'error');
+                return;
+            }
+
+            log(`Starting RAW login attempt for ${email}...`);
+            log(`Target: ${SUPABASE_URL}/auth/v1/token?grant_type=password`);
+
+            try {
+                const start = Date.now();
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const duration = Date.now() - start;
+                log(`Request finished in ${duration}ms`);
+                
+                const data = await response.json();
+
+                if (!response.ok) {
+                    log(`FAILED: ${response.status} ${response.statusText}`, 'error');
+                    log(`Error Details: ${JSON.stringify(data, null, 2)}`, 'error');
+                    if (data.error_description) log(`Description: ${data.error_description}`, 'error');
+                    return;
+                }
+
+                log("SUCCESS! Login worked.", 'success');
+                log("Token received (first 20 chars): " + data.access_token.substring(0, 20) + "...", 'success');
+                log("User ID: " + data.user.id, 'success');
+                log("If this works here but not in the app, the issue is likely the React App Code (validators, contexts, or middleware).", 'success');
+
+            } catch (e) {
+                log(`CRITICAL ERROR: ${e.message}`, 'error');
+                if (e.message.includes("Failed to fetch")) {
+                    log("Network Blocked! Browser cannot reach Supabase.", 'error');
+                    log("Check: AdBlockers, VPN, Firewall, DNS.", 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

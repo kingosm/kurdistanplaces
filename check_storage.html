@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Storage Checker</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #222;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Storage Inspector</h1>
+    <div id="result">Checking...</div>
+    <script>
+        const KEY = 'sb-vugyakqabzksrwvrxkof-auth-token';
+        const val = localStorage.getItem(KEY);
+        const el = document.getElementById('result');
+
+        if (val) {
+            el.innerHTML = "<h2 style='color: lime'>SESSION FOUND ✅</h2>" +
+                "<p>Length: " + val.length + " chars</p>" +
+                "<pre>" + val.substring(0, 100) + "...</pre>";
+        } else {
+            el.innerHTML = "<h2 style='color: red'>NO SESSION FOUND ❌</h2>" +
+                "<p>The browser storage is EMPTY for this key.</p>" +
+                "<p>Checking other keys:</p><ul>";
+
+            for (let i = 0; i < localStorage.length; i++) {
+                el.innerHTML += "<li>" + localStorage.key(i) + "</li>";
+            }
+            el.innerHTML += "</ul>";
+        }
+    </script>
+</body>
+
+</html>
