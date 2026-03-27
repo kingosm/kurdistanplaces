@@ -37,9 +37,14 @@
   }
 
   body {
-    @apply bg-background text-foreground tracking-tight transition-colors duration-500 font-sans antialiased text-base;
+    @apply text-foreground tracking-tight transition-colors duration-500 font-sans antialiased text-base;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.88)), url('/site-bg.png');
+    background-size: cover;
+    background-position: center bottom;
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 
   h1,
